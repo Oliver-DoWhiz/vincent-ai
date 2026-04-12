@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vincent AI Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body data-page="assessment">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-c"></div>
+    <main class="assessment-shell shell">
+      <section class="assessment-header">
+        <a href="/" class="back-link">Vincent AI</a>
+        <div class="assessment-meta">
+          <span class="eyebrow">24 questions</span>
+          <span class="eyebrow">reflective, non-clinical</span>
+        </div>
+      </section>
+
+      <section class="assessment-layout">
+        <aside class="assessment-side card glass-card">
+          <p class="eyebrow">Session</p>
+          <h1>Surgical self-inquiry.</h1>
+          <p>
+            Choose the answer that feels most like your default pattern, not the
+            most aspirational version of yourself.
+          </p>
+          <div class="progress-stack">
+            <div class="progress-labels">
+              <span id="progressLabel">Question 1 of 24</span>
+              <span id="progressPercent">4%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <div id="dimensionChips" class="chip-grid"></div>
+          <p class="microcopy">
+            Vincent offers a reflective read, not medical advice and not a
+            diagnostic instrument.
+          </p>
+        </aside>
+
+        <section class="assessment-main">
+          <article class="card question-card" id="questionCard">
+            <div class="question-topline">
+              <span class="badge" id="dimensionBadge">Loading</span>
+              <span id="questionIndex">01</span>
+            </div>
+            <h2 id="questionPrompt">Loading your first question…</h2>
+            <div id="optionList" class="option-list"></div>
+            <div class="question-actions">
+              <button id="previousButton" class="secondary-button button-reset" type="button">
+                Previous
+              </button>
+              <button id="nextButton" class="primary-button button-reset" type="button">
+                Next
+              </button>
+            </div>
+          </article>
+
+          <article class="card result-card hidden" id="resultCard">
+            <div class="panel-heading">
+              <span id="resultTone">Result</span>
+              <span class="badge hidden" id="shadowBadge">Shadow trigger</span>
+            </div>
+            <h2 id="resultName">Archetype</h2>
+            <p class="panel-subtitle" id="resultSubtitle"></p>
+            <p class="panel-body" id="resultEssence"></p>
+            <div class="result-grid">
+              <div class="result-block">
+                <label>Similarity</label>
+                <strong id="resultSimilarity">0%</strong>
+              </div>
+              <div class="result-block">
+                <label>Signature</label>
+                <strong id="resultSignature">-</strong>
+              </div>
+            </div>
+            <div id="dimensionBars" class="dimension-bars"></div>
+            <div class="result-columns">
+              <div>
+                <h3>Gifts</h3>
+                <ul id="resultGifts" class="clean-list"></ul>
+              </div>
+              <div>
+                <h3>Support</h3>
+                <ul id="resultSupport" class="clean-list"></ul>
+              </div>
+            </div>
+            <div class="result-note">
+              <h3>Editorial read</h3>
+              <p id="resultFracture"></p>
+              <p id="resultCaution" class="microcopy"></p>
+            </div>
+            <div class="question-actions">
+              <button id="restartButton" class="secondary-button button-reset" type="button">
+                Start Over
+              </button>
+              <a href="/" class="primary-button">Back To Landing</a>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
