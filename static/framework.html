@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vincent Framework</title>
+    <meta
+      name="description"
+      content="Learn how Vincent combines continuous construct scores with an editorial persona layer."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var hour = new Date().getHours();
+        var theme = hour >= 6 && hour < 18 ? "day" : "night";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/app.css?v=20260415a" />
+    <script defer src="/static/app.js?v=20260415a"></script>
+  </head>
+  <body data-page="framework">
+    <div class="site-shell">
+      <header class="site-header shell">
+        <a href="/" class="brand brand-large" aria-label="Vincent AI home" data-preserve-lang>
+          <span class="brand-mark">V</span>
+          <span class="brand-copy">
+            <strong>Vincent AI</strong>
+            <small id="brandTagline">reflective assessment</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/assessment" id="navAssessment" class="nav-link" data-preserve-lang>
+            Assessment
+          </a>
+          <a href="/personas" id="navPersonas" class="nav-link" data-preserve-lang>
+            Personas
+          </a>
+          <a href="/framework" id="navFramework" class="nav-link active" data-preserve-lang>
+            Framework
+          </a>
+        </nav>
+
+        <div class="site-actions">
+          <div class="locale-toggle" aria-label="Language switch">
+            <button type="button" class="locale-button" data-lang-target="en">EN</button>
+            <button type="button" class="locale-button" data-lang-target="zh">中文</button>
+          </div>
+          <a href="/assessment" id="headerCta" class="button button-primary" data-preserve-lang>
+            Start assessment
+          </a>
+        </div>
+      </header>
+
+      <main class="shell framework-page">
+        <section class="directory-hero surface">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="frameworkEyebrow">Framework</p>
+            <h1 id="frameworkTitle">A construct-first model, with a clearly labeled persona layer.</h1>
+            <p class="section-lead" id="frameworkLead">
+              Vincent’s main score is continuous. The persona is a memory-friendly editorial lens
+              placed on top of that score, not a diagnostic identity.
+            </p>
+          </div>
+        </section>
+
+        <section class="section-stack">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="frameworkConstructsEyebrow">Seven constructs</p>
+            <h2 id="frameworkConstructsTitle">The model underneath the styling.</h2>
+          </div>
+          <div id="frameworkConstructGrid" class="construct-grid"></div>
+        </section>
+
+        <section class="section-stack">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="frameworkScoringEyebrow">Scoring</p>
+            <h2 id="frameworkScoringTitle">How Vincent moves from answers to output.</h2>
+          </div>
+          <div id="frameworkStepGrid" class="step-grid"></div>
+        </section>
+
+        <section class="section-stack">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="frameworkGuardrailsEyebrow">Guardrails</p>
+            <h2 id="frameworkGuardrailsTitle">What the result should never be mistaken for.</h2>
+          </div>
+          <div id="frameworkGuardrailGrid" class="feature-grid"></div>
+        </section>
+
+        <section class="shell">
+          <div class="cta-banner surface">
+            <div>
+              <p class="eyebrow" id="frameworkBannerEyebrow">Next step</p>
+              <h2 id="frameworkBannerTitle">See the model in action on your own result.</h2>
+              <p class="section-lead" id="frameworkBannerLead">
+                Take the assessment, then compare the continuous construct readout to the editorial
+                persona it generates.
+              </p>
+            </div>
+            <a
+              href="/assessment"
+              id="frameworkBannerCta"
+              class="button button-primary"
+              data-preserve-lang
+            >
+              Take the assessment
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer shell">
+        <div class="footer-copy">
+          <strong>Vincent AI</strong>
+          <p id="footerNote">
+            Reflective personality and attachment check-in with an editorial persona layer.
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="/assessment" id="footerAssessment" data-preserve-lang>Assessment</a>
+          <a href="/personas" id="footerPersonas" data-preserve-lang>Personas</a>
+          <a href="/framework" id="footerFramework" data-preserve-lang>Framework</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

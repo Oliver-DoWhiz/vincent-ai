@@ -24,6 +24,9 @@ pub fn build_app() -> Router {
     Router::new()
         .route("/", get(landing))
         .route("/assessment", get(assessment))
+        .route("/personas", get(personas))
+        .route("/personas/:slug", get(persona_detail))
+        .route("/framework", get(framework))
         .route("/api/questions", get(all_questions))
         .route("/api/score", post(score_assessment))
         .nest_service(
@@ -67,6 +70,18 @@ async fn landing() -> Html<&'static str> {
 
 async fn assessment() -> Html<&'static str> {
     Html(include_str!("../static/assessment.html"))
+}
+
+async fn personas() -> Html<&'static str> {
+    Html(include_str!("../static/personas.html"))
+}
+
+async fn persona_detail() -> Html<&'static str> {
+    Html(include_str!("../static/persona.html"))
+}
+
+async fn framework() -> Html<&'static str> {
+    Html(include_str!("../static/framework.html"))
 }
 
 async fn all_questions(State(_): State<AppState>) -> Json<&'static [crate::domain::Question]> {
