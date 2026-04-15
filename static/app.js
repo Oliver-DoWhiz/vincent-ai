@@ -5150,23 +5150,24 @@
       biomeDark: familyScene.biomeDark,
       biomeAccent: familyScene.biomeAccent,
       clothFront: persona.palette.outfit,
-      clothTop: mixHexColors(persona.palette.outfit, "#ffffff", 0.28),
-      clothSide: mixHexColors(persona.palette.outfit, "#111316", 0.54),
-      clothDark: mixHexColors(persona.palette.outfit, "#111316", 0.7),
-      clothTrim: mixHexColors(persona.palette.outfit, persona.palette.accent, 0.32),
-      beltFront: mixHexColors(persona.palette.outfit, "#111316", 0.44),
+      clothTop: mixHexColors(persona.palette.outfit, "#ffffff", 0.18),
+      clothSide: mixHexColors(persona.palette.outfit, "#111316", 0.44),
+      clothShade: mixHexColors(persona.palette.outfit, "#111316", 0.58),
+      pantsFront: mixHexColors(persona.palette.outfit, "#111316", 0.18),
+      pantsTop: mixHexColors(persona.palette.outfit, "#ffffff", 0.08),
+      pantsSide: mixHexColors(persona.palette.outfit, "#111316", 0.62),
       accentFront: persona.palette.accent,
-      accentTop: mixHexColors(persona.palette.accent, "#ffffff", 0.28),
-      accentSide: mixHexColors(persona.palette.accent, "#111316", 0.48),
+      accentTop: mixHexColors(persona.palette.accent, "#ffffff", 0.2),
+      accentSide: mixHexColors(persona.palette.accent, "#111316", 0.42),
       skinFront: persona.palette.skin,
       skinTop: mixHexColors(persona.palette.skin, "#ffffff", 0.22),
       skinSide: mixHexColors(persona.palette.skin, "#111316", 0.34),
       hairFront: persona.palette.hair,
       hairTop: mixHexColors(persona.palette.hair, "#ffffff", 0.18),
       hairSide: mixHexColors(persona.palette.hair, "#111316", 0.48),
-      bootFront: mixHexColors(persona.palette.outfit, "#111316", 0.68),
-      bootTop: mixHexColors(persona.palette.outfit, "#ffffff", 0.1),
-      bootSide: mixHexColors(persona.palette.outfit, "#111316", 0.82),
+      bootFront: mixHexColors(persona.palette.outfit, "#111316", 0.72),
+      bootTop: mixHexColors(persona.palette.outfit, "#ffffff", 0.06),
+      bootSide: mixHexColors(persona.palette.outfit, "#111316", 0.84),
       pathTop: mixHexColors(familyScene.biomeLight, "#dcc07f", 0.46),
       pathFront: mixHexColors(familyScene.biomeMain, "#936d3a", 0.18),
       pathDark: mixHexColors(familyScene.biomeDark, "#111316", 0.14),
@@ -5197,23 +5198,23 @@
 
   function buildMinecraftPersonaSpec(persona) {
     return {
-      "beacon-architect": { pose: "raise", terrain: "stone", cue: "beacon", overlay: "stone" },
-      "bridge-director": { pose: "present", terrain: "path", cue: "bridge", overlay: "path" },
-      "prism-strategist": { pose: "hold", terrain: "stone", cue: "redstone", overlay: "redstone" },
-      "stone-captain": { pose: "guard", terrain: "stone", cue: "wall", overlay: "stone" },
-      "openwave-host": { pose: "hold", terrain: "path", cue: "lantern-garden", overlay: "flowers" },
-      "harbor-rallyer": { pose: "present", terrain: "path", cue: "bell-fence", overlay: "path" },
-      "neon-pathfinder": { pose: "present", terrain: "path", cue: "waypoint", overlay: "redstone" },
-      "iron-maverick": { pose: "raise", terrain: "stone", cue: "forge", overlay: "embers" },
-      "quiet-cartographer": { pose: "hold", terrain: "grass", cue: "map-table", overlay: "grass" },
-      "cedar-keeper": { pose: "hold", terrain: "grass", cue: "grove", overlay: "grass" },
-      "archive-analyst": { pose: "hold", terrain: "grass", cue: "archive", overlay: "crate" },
-      "granite-planner": { pose: "present", terrain: "stone", cue: "drafting", overlay: "stone" },
-      "night-gardener": { pose: "hold", terrain: "garden", cue: "garden", overlay: "flowers" },
-      "harbor-listener": { pose: "carry", terrain: "shore", cue: "dock", overlay: "reeds" },
-      "veil-dreamer": { pose: "raise", terrain: "shore", cue: "crystal", overlay: "crystal" },
-      "still-sentinel": { pose: "carry", terrain: "shore", cue: "watchpost", overlay: "stone" },
-    }[persona.slug];
+      "beacon-architect": { pose: "signal", terrain: "stone", cue: "beacon", prop: "beacon" },
+      "bridge-director": { pose: "offer", terrain: "path", cue: "bridge", prop: "banner" },
+      "prism-strategist": { pose: "carry", terrain: "stone", cue: "redstone", prop: "map" },
+      "stone-captain": { pose: "guard", terrain: "stone", cue: "wall", prop: "shield" },
+      "openwave-host": { pose: "carry", terrain: "path", cue: "lantern-garden", prop: "flower" },
+      "harbor-rallyer": { pose: "offer", terrain: "path", cue: "bell-fence", prop: "bell" },
+      "neon-pathfinder": { pose: "signal", terrain: "path", cue: "waypoint", prop: "torch" },
+      "iron-maverick": { pose: "signal", terrain: "stone", cue: "forge", prop: "tool" },
+      "quiet-cartographer": { pose: "carry", terrain: "grass", cue: "map-table", prop: "scroll" },
+      "cedar-keeper": { pose: "carry", terrain: "grass", cue: "grove", prop: "sapling" },
+      "archive-analyst": { pose: "carry", terrain: "grass", cue: "archive", prop: "book" },
+      "granite-planner": { pose: "offer", terrain: "stone", cue: "drafting", prop: "clipboard" },
+      "night-gardener": { pose: "carry", terrain: "grass", cue: "garden", prop: "sprout" },
+      "harbor-listener": { pose: "guard", terrain: "shore", cue: "dock", prop: "lantern" },
+      "veil-dreamer": { pose: "signal", terrain: "shore", cue: "crystal", prop: "star" },
+      "still-sentinel": { pose: "guard", terrain: "shore", cue: "watchpost", prop: "compass" },
+    }[persona.slug] || { pose: "idle", terrain: "grass", cue: "watchpost", prop: "book" };
   }
 
   function buildMinecraftRig(persona, compact) {
@@ -5230,8 +5231,8 @@
       torso: part(40, 30, 16, 22, 4),
       leftLeg: part(40, 52, 8, 24, 4),
       rightLeg: part(48, 52, 8, 24, 4),
-      leftArm: [],
-      rightArm: [],
+      leftArm: [part(32, 30, 8, 22, 4)],
+      rightArm: [part(56, 30, 8, 22, 4)],
       leftHand: part(32, 52, 8, 6, 3),
       rightHand: part(56, 52, 8, 6, 3),
       anchors: {
@@ -5243,55 +5244,37 @@
     };
 
     switch (rig.poseKey) {
-      case "raise":
-        rig.leftArm = [part(32, 30, 8, 24, 4)];
-        rig.rightArm = [part(56, 12, 8, 24, 4)];
-        rig.leftHand = part(32, 52, 8, 6, 3);
-        rig.rightHand = part(56, 6, 8, 6, 3);
-        rig.anchors.right = { x: 60, y: 4 };
-        rig.anchors.left = { x: 28, y: 50 };
+      case "signal":
+        rig.rightArm = [part(56, 22, 8, 22, 4)];
+        rig.rightHand = part(56, 44, 8, 6, 3);
+        rig.anchors.right = { x: 60, y: 40 };
+        rig.anchors.chest = { x: 48, y: 42 };
         break;
       case "guard":
-        rig.leftArm = [part(24, 40, 16, 8, 3)];
-        rig.rightArm = [part(56, 32, 8, 22, 4)];
-        rig.leftHand = part(18, 40, 6, 8, 2);
-        rig.rightHand = part(56, 52, 8, 6, 3);
-        rig.anchors.left = { x: 16, y: 40 };
+        rig.leftArm = [part(30, 34, 8, 22, 4)];
+        rig.leftHand = part(30, 56, 8, 6, 3);
+        rig.rightArm = [part(56, 30, 8, 22, 4)];
+        rig.anchors.left = { x: 24, y: 50 };
         rig.anchors.right = { x: 60, y: 50 };
         rig.anchors.chest = { x: 48, y: 44 };
         break;
-      case "hold":
-        rig.leftArm = [part(32, 42, 12, 8, 3)];
-        rig.rightArm = [part(52, 42, 12, 8, 3)];
-        rig.leftHand = part(42, 42, 6, 8, 2);
-        rig.rightHand = part(48, 42, 6, 8, 2);
-        rig.anchors.right = { x: 56, y: 46 };
-        rig.anchors.left = { x: 40, y: 46 };
+      case "carry":
+        rig.leftArm = [part(36, 34, 8, 18, 4)];
+        rig.rightArm = [part(52, 34, 8, 18, 4)];
+        rig.leftHand = part(40, 50, 6, 6, 2);
+        rig.rightHand = part(50, 50, 6, 6, 2);
+        rig.anchors.right = { x: 52, y: 46 };
+        rig.anchors.left = { x: 44, y: 46 };
         rig.anchors.chest = { x: 48, y: 47 };
         break;
-      case "present":
-        rig.leftArm = [part(32, 30, 8, 24, 4)];
-        rig.rightArm = [part(56, 38, 20, 8, 3)];
-        rig.leftHand = part(32, 52, 8, 6, 3);
-        rig.rightHand = part(76, 38, 6, 8, 2);
+      case "offer":
+        rig.rightArm = [part(58, 34, 8, 18, 4)];
+        rig.rightHand = part(61, 52, 6, 6, 2);
         rig.anchors.left = { x: 28, y: 50 };
-        rig.anchors.right = { x: 82, y: 40 };
+        rig.anchors.right = { x: 64, y: 50 };
         rig.anchors.chest = { x: 48, y: 44 };
         break;
-      case "carry":
-        rig.leftArm = [part(32, 30, 8, 24, 4)];
-        rig.rightArm = [part(56, 36, 8, 18, 4)];
-        rig.leftHand = part(32, 52, 8, 6, 3);
-        rig.rightHand = part(56, 52, 8, 6, 3);
-        rig.anchors.right = { x: 59, y: 56 };
-        rig.anchors.left = { x: 28, y: 50 };
-        rig.anchors.chest = { x: 48, y: 46 };
-        break;
       default:
-        rig.leftArm = [part(32, 30, 8, 24, 4)];
-        rig.rightArm = [part(56, 30, 8, 24, 4)];
-        rig.leftHand = part(32, 52, 8, 6, 3);
-        rig.rightHand = part(56, 52, 8, 6, 3);
         break;
     }
 
@@ -5299,15 +5282,18 @@
   }
 
   function buildMinecraftScene(theme, persona) {
+    const spec = buildMinecraftPersonaSpec(persona);
+
     return [
       buildMinecraftRect(0, 0, 96, 96, theme.sky),
-      buildMinecraftRect(0, 58, 96, 6, theme.skyEdge),
+      buildMinecraftRect(0, 56, 96, 4, theme.skyEdge),
       buildMinecraftSun(theme),
-      buildMinecraftCloud(10, 16, theme),
-      buildMinecraftFarHills(theme, persona.family),
-      buildMinecraftGround(theme, persona),
+      buildMinecraftCloud(10, 14, theme),
+      buildMinecraftCloud(56, 20, theme),
+      buildMinecraftFarHills(theme),
+      buildMinecraftGround(theme, spec),
+      buildMinecraftBiomeScene(theme, spec),
       buildMinecraftFigureShadow(theme),
-      buildMinecraftBiomeScene(theme, persona),
     ].join("");
   }
 
@@ -5334,113 +5320,94 @@
     ]);
   }
 
-  function buildMinecraftFarHills(theme, family) {
-    const secondary = family === "signals" ? theme.biomeLight : theme.hillBack;
-    const primary = theme.hillFront;
-
+  function buildMinecraftFarHills(theme) {
     return buildMinecraftRects([
-      { x: 0, y: 70, w: 24, h: 6, fill: secondary },
-      { x: 8, y: 66, w: 18, h: 4, fill: secondary },
-      { x: 18, y: 62, w: 14, h: 4, fill: secondary },
-      { x: 56, y: 72, w: 24, h: 6, fill: primary },
-      { x: 64, y: 68, w: 18, h: 4, fill: primary },
-      { x: 74, y: 64, w: 14, h: 4, fill: primary },
+      { x: 0, y: 70, w: 28, h: 6, fill: theme.hillBack },
+      { x: 8, y: 66, w: 18, h: 4, fill: theme.hillBack },
+      { x: 18, y: 62, w: 14, h: 4, fill: theme.hillBack },
+      { x: 52, y: 72, w: 28, h: 6, fill: theme.hillFront },
+      { x: 60, y: 68, w: 18, h: 4, fill: theme.hillFront },
+      { x: 70, y: 64, w: 14, h: 4, fill: theme.hillFront },
     ]);
   }
 
-  function buildMinecraftBiomeScene(theme, persona) {
-    const spec = buildMinecraftPersonaSpec(persona);
-
+  function buildMinecraftBiomeScene(theme, spec) {
     switch (spec.cue) {
       case "beacon":
-        return buildMinecraftBeaconStand(10, 54, theme);
+        return buildMinecraftBeaconStand(10, 58, theme);
       case "bridge":
-        return buildMinecraftBridgeSpan(70, 68, 16, theme);
+        return buildMinecraftBridgeSpan(8, 70, 14, theme);
       case "redstone":
-        return buildMinecraftRedstoneNode(12, 62, theme);
+        return buildMinecraftRedstoneNode(10, 66, theme);
       case "wall":
-        return buildMinecraftStoneWall(8, 60, 2, theme);
+        return buildMinecraftStoneWall(8, 68, 2, theme);
       case "lantern-garden":
-        return buildMinecraftLanternPost(12, 62, theme);
+        return buildMinecraftLanternPost(10, 66, theme);
       case "bell-fence":
-        return buildMinecraftBellStand(12, 62, theme);
+        return buildMinecraftBellStand(8, 66, theme);
       case "waypoint":
-        return buildMinecraftWaypointPost(78, 56, theme);
+        return buildMinecraftWaypointPost(10, 60, theme);
       case "forge":
-        return buildMinecraftForge(10, 64, theme);
+        return buildMinecraftForge(8, 70, theme);
       case "map-table":
-        return buildMinecraftMapTable(10, 66, theme);
+        return buildMinecraftMapTable(8, 70, theme);
       case "grove":
-        return buildMinecraftSceneTree(74, 50, theme);
+        return buildMinecraftSceneTree(6, 56, theme);
       case "archive":
-        return buildMinecraftBookshelf(78, 58, theme);
+        return buildMinecraftBookshelf(8, 60, theme);
       case "drafting":
-        return buildMinecraftSceneWorkbench(78, 66, theme);
+        return buildMinecraftSceneWorkbench(10, 70, theme);
       case "garden":
-        return buildMinecraftGardenPatch(10, 82, theme);
+        return buildMinecraftGardenPatch(8, 84, theme);
       case "dock":
-        return buildMinecraftSceneDock(72, 70, theme);
+        return buildMinecraftSceneDock(8, 72, theme);
       case "crystal":
-        return buildMinecraftStarTotem(78, 60, theme);
+        return buildMinecraftStarTotem(10, 62, theme);
       default:
-        return buildMinecraftWatchpost(78, 58, theme);
+        return buildMinecraftWatchpost(8, 62, theme);
     }
   }
 
-  function buildMinecraftGround(theme, persona) {
-    const spec = buildMinecraftPersonaSpec(persona);
-    const profiles = {
-      stone: [
-        { x: 0, y: 84, w: 24, h: 12, surface: "stone" },
-        { x: 24, y: 80, w: 48, h: 16, surface: "stone" },
-        { x: 72, y: 84, w: 20, h: 12, surface: "stone" },
-        { x: 8, y: 76, w: 16, h: 8, surface: "stone", d: 3 },
-        { x: 72, y: 76, w: 16, h: 8, surface: "stone", d: 3 },
-      ],
-      path: [
-        { x: 0, y: 84, w: 24, h: 12, surface: "grass" },
-        { x: 24, y: 80, w: 48, h: 16, surface: "grass" },
-        { x: 30, y: 80, w: 36, h: 10, surface: "path", d: 3 },
-        { x: 72, y: 84, w: 20, h: 12, surface: "grass" },
-        { x: 8, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-        { x: 72, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-      ],
-      grass: [
-        { x: 0, y: 84, w: 24, h: 12, surface: "grass" },
-        { x: 24, y: 80, w: 48, h: 16, surface: "grass" },
-        { x: 72, y: 84, w: 20, h: 12, surface: "grass" },
-        { x: 8, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-        { x: 72, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-      ],
-      garden: [
-        { x: 0, y: 84, w: 24, h: 12, surface: "grass" },
-        { x: 24, y: 80, w: 48, h: 16, surface: "grass" },
-        { x: 34, y: 80, w: 18, h: 10, surface: "path", d: 3 },
-        { x: 72, y: 84, w: 20, h: 12, surface: "grass" },
-        { x: 8, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-        { x: 72, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-      ],
-      shore: [
-        { x: 0, y: 84, w: 24, h: 12, surface: "grass" },
-        { x: 24, y: 80, w: 28, h: 16, surface: "sand" },
-        { x: 52, y: 82, w: 20, h: 14, surface: "sand" },
-        { x: 72, y: 84, w: 20, h: 12, surface: "water" },
-        { x: 8, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
-      ],
-    };
-    const blocks = profiles[spec.terrain] || profiles.grass;
+  function buildMinecraftGround(theme, spec) {
+    const blocks = [
+      { x: 0, y: 84, w: 24, h: 12, surface: "grass" },
+      { x: 24, y: 80, w: 48, h: 16, surface: "grass" },
+      { x: 72, y: 84, w: 20, h: 12, surface: "grass" },
+      { x: 8, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
+      { x: 72, y: 76, w: 16, h: 8, surface: "grass", d: 3 },
+    ];
 
-    return blocks.map(function (block) {
-      return buildMinecraftTerrainMass(
-        block.x,
-        block.y,
-        block.w,
-        block.h,
-        block.surface,
-        theme,
-        block.d
-      );
-    }).join("");
+    switch (spec.terrain) {
+      case "stone":
+        blocks.forEach(function (block) {
+          block.surface = "stone";
+        });
+        break;
+      case "path":
+        blocks.splice(2, 0, { x: 30, y: 80, w: 36, h: 10, surface: "path", d: 3 });
+        break;
+      case "shore":
+        blocks[1].surface = "sand";
+        blocks[2].surface = "water";
+        blocks[4].surface = "sand";
+        break;
+      default:
+        break;
+    }
+
+    return blocks
+      .map(function (block) {
+        return buildMinecraftTerrainMass(
+          block.x,
+          block.y,
+          block.w,
+          block.h,
+          block.surface,
+          theme,
+          block.d
+        );
+      })
+      .join("");
   }
 
   function buildMinecraftFigureShadow(theme) {
@@ -5925,10 +5892,9 @@
         leg.y,
         leg.w,
         leg.h,
-        { front: theme.clothFront, top: theme.clothTop, side: theme.clothSide },
+        { front: theme.pantsFront, top: theme.pantsTop, side: theme.pantsSide },
         leg.d
       ),
-      buildMinecraftRect(leg.x, leg.y, leg.w, 4, theme.clothTrim),
       buildMinecraftRect(leg.x, leg.y + leg.h - 5, leg.w, 5, theme.bootFront),
       buildMinecraftRect(leg.x + leg.w, leg.y + leg.h - 5, leg.d, 5, theme.bootSide),
     ].join("");
@@ -5944,9 +5910,8 @@
         { front: theme.clothFront, top: theme.clothTop, side: theme.clothSide },
         torso.d
       ),
-      buildMinecraftRect(torso.x, torso.y, torso.w, 6, theme.clothTrim),
-      buildMinecraftRect(torso.x, torso.y + torso.h - 6, torso.w, 3, theme.beltFront),
-      buildMinecraftRect(torso.x + torso.w, torso.y + torso.h - 6, torso.d, 3, theme.clothDark),
+      buildMinecraftRect(torso.x, torso.y, torso.w, 4, theme.clothShade),
+      buildMinecraftRect(torso.x, torso.y + torso.h - 4, torso.w, 4, theme.clothShade),
     ].join("");
   }
 
@@ -5987,8 +5952,8 @@
       buildMinecraftHair(head, theme),
       buildMinecraftRects([
         { x: head.x + 5, y: head.y + 7, w: 2, h: 2, fill: theme.ink },
-        { x: head.x + 11, y: head.y + 7, w: 2, h: 2, fill: theme.ink },
-        { x: head.x + 6, y: head.y + 12, w: 5, h: 1, fill: theme.mouth },
+        { x: head.x + 10, y: head.y + 7, w: 2, h: 2, fill: theme.ink },
+        { x: head.x + 7, y: head.y + 12, w: 3, h: 1, fill: theme.mouth },
       ]),
     ].join("");
   }
@@ -5996,10 +5961,10 @@
   function buildMinecraftHair(head, theme) {
     return buildMinecraftRects([
       { x: head.x + head.d, y: head.y - head.d, w: head.w, h: head.d, fill: theme.hairTop },
-      { x: head.x + head.w, y: head.y, w: head.d, h: head.h - 2, fill: theme.hairSide },
+      { x: head.x + head.w, y: head.y, w: head.d, h: head.h, fill: theme.hairSide },
       { x: head.x, y: head.y, w: head.w, h: 4, fill: theme.hairFront },
-      { x: head.x, y: head.y + 4, w: 3, h: 3, fill: theme.hairFront },
-      { x: head.x + head.w - 3, y: head.y + 4, w: 3, h: 3, fill: theme.hairFront },
+      { x: head.x, y: head.y + 4, w: 2, h: 4, fill: theme.hairFront },
+      { x: head.x + head.w - 2, y: head.y + 4, w: 2, h: 4, fill: theme.hairFront },
     ]);
   }
 
@@ -6012,38 +5977,40 @@
   }
 
   function buildMinecraftHeldAccessory(theme, persona, rig) {
-    switch (persona.slug) {
-      case "beacon-architect":
+    const spec = buildMinecraftPersonaSpec(persona);
+
+    switch (spec.prop) {
+      case "beacon":
         return buildMinecraftBeaconProp(rig.anchors.right.x + 1, rig.anchors.right.y, theme);
-      case "bridge-director":
-        return buildMinecraftBannerProp(rig.anchors.right.x - 3, rig.anchors.right.y + 4, theme);
-      case "prism-strategist":
+      case "banner":
+        return buildMinecraftBannerProp(rig.anchors.right.x - 2, rig.anchors.right.y - 2, theme);
+      case "map":
         return buildMinecraftMapProp(rig.anchors.chest.x - 5, rig.anchors.chest.y - 1, theme);
-      case "stone-captain":
+      case "shield":
         return buildMinecraftShieldProp(rig.anchors.left.x, rig.anchors.left.y - 2, theme);
-      case "openwave-host":
+      case "flower":
         return buildMinecraftFlowerProp(rig.anchors.chest.x - 5, rig.anchors.chest.y, theme);
-      case "harbor-rallyer":
+      case "bell":
         return buildMinecraftBellProp(rig.anchors.right.x - 5, rig.anchors.right.y - 2, theme);
-      case "neon-pathfinder":
+      case "torch":
         return buildMinecraftTorchProp(rig.anchors.right.x - 4, rig.anchors.right.y - 2, theme);
-      case "iron-maverick":
+      case "tool":
         return buildMinecraftToolProp(rig.anchors.right.x - 5, rig.anchors.right.y - 2, theme);
-      case "quiet-cartographer":
+      case "scroll":
         return buildMinecraftScrollProp(rig.anchors.chest.x - 6, rig.anchors.chest.y, theme);
-      case "cedar-keeper":
+      case "sapling":
         return buildMinecraftSaplingProp(rig.anchors.chest.x - 4, rig.anchors.chest.y - 2, theme);
-      case "archive-analyst":
+      case "book":
         return buildMinecraftBookProp(rig.anchors.chest.x - 5, rig.anchors.chest.y - 1, theme);
-      case "granite-planner":
-        return buildMinecraftChestProp(rig.anchors.right.x - 7, rig.anchors.right.y - 2, theme);
-      case "night-gardener":
+      case "clipboard":
+        return buildMinecraftClipboardProp(rig.anchors.right.x - 4, rig.anchors.right.y - 4, theme);
+      case "sprout":
         return buildMinecraftSproutProp(rig.anchors.chest.x - 4, rig.anchors.chest.y - 2, theme);
-      case "harbor-listener":
+      case "lantern":
         return buildMinecraftLanternProp(rig.anchors.right.x - 1, rig.anchors.right.y - 2, theme);
-      case "veil-dreamer":
-        return buildMinecraftBookProp(rig.anchors.right.x - 4, rig.anchors.right.y - 4, theme);
-      case "still-sentinel":
+      case "star":
+        return buildMinecraftStarProp(rig.anchors.right.x - 1, rig.anchors.right.y - 8, theme);
+      case "compass":
         return buildMinecraftCompassProp(rig.anchors.right.x - 2, rig.anchors.right.y - 4, theme);
       default:
         return "";
@@ -6063,12 +6030,11 @@
 
   function buildMinecraftBannerProp(x, y, theme) {
     return [
-      buildMinecraftRect(x + 2, y - 20, 2, 24, theme.woodDark),
+      buildMinecraftRect(x + 2, y - 10, 2, 14, theme.woodDark),
       buildMinecraftRects([
-        { x: x + 4, y: y - 20, w: 8, h: 2, fill: theme.accentFront },
-        { x: x + 4, y: y - 18, w: 6, h: 2, fill: theme.accentFront },
-        { x: x + 4, y: y - 16, w: 8, h: 2, fill: theme.accentSide },
-        { x: x + 4, y: y - 14, w: 6, h: 2, fill: theme.accentFront },
+        { x: x + 4, y: y - 10, w: 6, h: 2, fill: theme.accentFront },
+        { x: x + 4, y: y - 8, w: 6, h: 2, fill: theme.accentSide },
+        { x: x + 4, y: y - 6, w: 4, h: 2, fill: theme.accentFront },
       ]),
     ].join("");
   }
