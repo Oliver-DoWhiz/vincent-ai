@@ -2,14 +2,6 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize)]
-pub struct Question {
-    pub id: &'static str,
-    pub dimension: &'static str,
-    pub prompt: &'static str,
-    pub options: [Choice; 3],
-}
-
 #[derive(Debug, Clone, Copy, Serialize)]
 pub struct Choice {
     pub label: &'static str,
@@ -17,17 +9,12 @@ pub struct Choice {
 }
 
 #[derive(Debug, Clone, Copy, Serialize)]
-pub struct Archetype {
-    pub slug: &'static str,
-    pub name: &'static str,
-    pub subtitle: &'static str,
-    pub tone: &'static str,
-    pub signature: &'static str,
-    pub shadow: bool,
-    pub essence: &'static str,
-    pub gifts: &'static [&'static str],
-    pub fracture: &'static str,
-    pub support: &'static [&'static str],
+pub struct Question {
+    pub id: &'static str,
+    pub dimension: &'static str,
+    pub prompt: &'static str,
+    pub reverse_keyed: bool,
+    pub options: [Choice; 5],
 }
 
 #[derive(Debug, Deserialize)]
@@ -37,28 +24,20 @@ pub struct ScoreRequest {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ScoreResponse {
-    pub archetype: &'static Archetype,
-    pub similarity: u8,
-    pub signature: String,
-    pub shadow_triggered: bool,
-    pub dimensions: Vec<DimensionScore>,
-    pub narrative: Narrative,
+    pub constructs: Vec<ConstructScore>,
+    pub item_count: usize,
+    pub response_scale: &'static str,
+    pub note: &'static str,
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct DimensionScore {
+pub struct ConstructScore {
     pub key: &'static str,
     pub label: &'static str,
-    pub total: u8,
-    pub band: &'static str,
+    pub raw_total: u8,
+    pub mean_score: f32,
+    pub display_band: &'static str,
     pub interpretation: &'static str,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub struct Narrative {
-    pub headline: String,
-    pub reflection: String,
-    pub caution: String,
 }
 
 #[derive(Debug)]
@@ -74,651 +53,269 @@ impl ScoreError {
                 "Assessment incomplete. Missing answers for: {}.",
                 ids.join(", ")
             ),
-            Self::InvalidAnswer { question_id, value } => {
-                format!("Answer for `{question_id}` must be 1, 2, or 3. Received `{value}`.")
-            }
+            Self::InvalidAnswer { question_id, value } => format!(
+                "Answer for `{question_id}` must be 1, 2, 3, 4, or 5. Received `{value}`."
+            ),
         }
     }
 }
 
-const DIMENSIONS: [(&str, &str); 8] = [
-    ("DRIVE", "Ambition"),
-    ("BOUNDARY", "Boundary"),
-    ("EXPOSURE", "Visibility"),
-    ("VOLATILITY", "Intensity"),
-    ("DISCIPLINE", "Discipline"),
-    ("INTERPRETATION", "Meaning-Making"),
-    ("ATTACHMENT", "Attachment"),
-    ("INITIATIVE", "Initiative"),
-];
+#[derive(Debug, Clone, Copy)]
+struct Construct {
+    key: &'static str,
+    label: &'static str,
+}
 
-pub const QUESTIONS: [Question; 24] = [
-    Question {
-        id: "drive_1",
-        dimension: "DRIVE",
-        prompt: "A high-prestige opportunity appears. Your first instinct is:",
-        options: [
-            Choice {
-                label: "Ask whether I want the life that comes with it.",
-                value: 1,
-            },
-            Choice {
-                label: "Measure the upside, then decide with a cool head.",
-                value: 2,
-            },
-            Choice {
-                label: "Take the room before someone slower does.",
-                value: 3,
-            },
-        ],
+const LIKERT_OPTIONS: [Choice; 5] = [
+    Choice {
+        label: "Strongly disagree",
+        value: 1,
     },
-    Question {
-        id: "drive_2",
-        dimension: "DRIVE",
-        prompt: "When peers start accelerating, you usually:",
-        options: [
-            Choice {
-                label: "Protect my pace. Not every race is mine.",
-                value: 1,
-            },
-            Choice {
-                label: "Notice it, recalibrate, then keep moving.",
-                value: 2,
-            },
-            Choice {
-                label: "Feel the heat immediately and push harder.",
-                value: 3,
-            },
-        ],
+    Choice {
+        label: "Disagree",
+        value: 2,
     },
-    Question {
-        id: "drive_3",
-        dimension: "DRIVE",
-        prompt: "Recognition lands on someone else after shared work. You:",
-        options: [
-            Choice {
-                label: "Shrug. Credit matters less than peace.",
-                value: 1,
-            },
-            Choice {
-                label: "Log it mentally and adjust next time.",
-                value: 2,
-            },
-            Choice {
-                label: "Feel it sharply. I should not be easy to overlook.",
-                value: 3,
-            },
-        ],
+    Choice {
+        label: "Neither / unsure",
+        value: 3,
     },
-    Question {
-        id: "boundary_1",
-        dimension: "BOUNDARY",
-        prompt: "Someone asks for more of you than is fair. You usually:",
-        options: [
-            Choice {
-                label: "Say yes, then pay for it later.",
-                value: 1,
-            },
-            Choice {
-                label: "Negotiate. I can help, but not endlessly.",
-                value: 2,
-            },
-            Choice {
-                label: "Decline cleanly. My limits are not a debate.",
-                value: 3,
-            },
-        ],
+    Choice {
+        label: "Agree",
+        value: 4,
     },
-    Question {
-        id: "boundary_2",
-        dimension: "BOUNDARY",
-        prompt: "A friend keeps venting without changing anything. You:",
-        options: [
-            Choice {
-                label: "Absorb it. I would rather carry it than disappoint them.",
-                value: 1,
-            },
-            Choice {
-                label: "Offer support, but name the pattern.",
-                value: 2,
-            },
-            Choice {
-                label: "Step back fast. Repetition is not intimacy.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "boundary_3",
-        dimension: "BOUNDARY",
-        prompt: "In conflict, your default is:",
-        options: [
-            Choice {
-                label: "Self-edit until the room stays calm.",
-                value: 1,
-            },
-            Choice {
-                label: "Say the necessary thing without theatrics.",
-                value: 2,
-            },
-            Choice {
-                label: "Cut to the bone. Precision matters more than comfort.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "exposure_1",
-        dimension: "EXPOSURE",
-        prompt: "Before sharing something publicly, you:",
-        options: [
-            Choice {
-                label: "Prefer not to. My interior life is not a feed.",
-                value: 1,
-            },
-            Choice {
-                label: "Share selectively if it adds something true.",
-                value: 2,
-            },
-            Choice {
-                label: "Shape the framing until the message lands exactly right.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "exposure_2",
-        dimension: "EXPOSURE",
-        prompt: "When you enter a new room, your energy is usually:",
-        options: [
-            Choice {
-                label: "Observational. I let the room reveal itself first.",
-                value: 1,
-            },
-            Choice {
-                label: "Adaptive. I find the right register and settle in.",
-                value: 2,
-            },
-            Choice {
-                label: "Composed for impact. Presence is part of the work.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "exposure_3",
-        dimension: "EXPOSURE",
-        prompt: "Your online self compared with your offline self is:",
-        options: [
-            Choice {
-                label: "Smaller. I reveal less than people assume.",
-                value: 1,
-            },
-            Choice {
-                label: "Close enough. Some editing, not a costume.",
-                value: 2,
-            },
-            Choice {
-                label: "Sharper. I know how to direct attention when it matters.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "volatility_1",
-        dimension: "VOLATILITY",
-        prompt: "A minor slight from the wrong person can:",
-        options: [
-            Choice {
-                label: "Pass through me by nightfall.",
-                value: 1,
-            },
-            Choice {
-                label: "Stay in mind until I make sense of it.",
-                value: 2,
-            },
-            Choice {
-                label: "Light the whole internal system on fire.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "volatility_2",
-        dimension: "VOLATILITY",
-        prompt: "When emotion arrives, you tend to:",
-        options: [
-            Choice {
-                label: "Contain it. The feeling can wait.",
-                value: 1,
-            },
-            Choice {
-                label: "Study it until it becomes legible.",
-                value: 2,
-            },
-            Choice {
-                label: "Move with it immediately. Delay feels false.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "volatility_3",
-        dimension: "VOLATILITY",
-        prompt: "People who know you well would say your emotional weather is:",
-        options: [
-            Choice {
-                label: "Even. You rarely see the storm from outside.",
-                value: 1,
-            },
-            Choice {
-                label: "Textured. It changes, but with some warning.",
-                value: 2,
-            },
-            Choice {
-                label: "Electric. Beautiful, alive, and hard to ignore.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "discipline_1",
-        dimension: "DISCIPLINE",
-        prompt: "A system only works for you if it is:",
-        options: [
-            Choice {
-                label: "Loose enough that I do not feel trapped by it.",
-                value: 1,
-            },
-            Choice {
-                label: "Practical enough to survive real life.",
-                value: 2,
-            },
-            Choice {
-                label: "Relentless. Structure buys me freedom.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "discipline_2",
-        dimension: "DISCIPLINE",
-        prompt: "When a streak breaks, you usually:",
-        options: [
-            Choice {
-                label: "Let it go. Ritual should not become punishment.",
-                value: 1,
-            },
-            Choice {
-                label: "Reset soon, without dramatizing it.",
-                value: 2,
-            },
-            Choice {
-                label: "Rebuild immediately. Slippage is expensive.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "discipline_3",
-        dimension: "DISCIPLINE",
-        prompt: "Your unfinished projects are mostly:",
-        options: [
-            Choice {
-                label: "Proof that curiosity outruns maintenance.",
-                value: 1,
-            },
-            Choice {
-                label: "A mix of decent instincts and imperfect timing.",
-                value: 2,
-            },
-            Choice {
-                label: "Rare. I do not start lightly, and I do not like open loops.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "interpretation_1",
-        dimension: "INTERPRETATION",
-        prompt: "Someone gives you vague feedback. Your mind goes to:",
-        options: [
-            Choice {
-                label: "The kindest plausible reading.",
-                value: 1,
-            },
-            Choice {
-                label: "Several readings at once, then I narrow them.",
-                value: 2,
-            },
-            Choice {
-                label: "What they meant but did not want to say aloud.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "interpretation_2",
-        dimension: "INTERPRETATION",
-        prompt: "A beautiful story about a person makes you:",
-        options: [
-            Choice {
-                label: "Want to believe it unless evidence says otherwise.",
-                value: 1,
-            },
-            Choice {
-                label: "Enjoy it, but keep one eyebrow raised.",
-                value: 2,
-            },
-            Choice {
-                label: "Look for the edit, omission, or incentive structure.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "interpretation_3",
-        dimension: "INTERPRETATION",
-        prompt: "Your strongest pattern-reading skill is usually:",
-        options: [
-            Choice {
-                label: "Knowing when not to over-interpret noise.",
-                value: 1,
-            },
-            Choice {
-                label: "Separating signal from mood.",
-                value: 2,
-            },
-            Choice {
-                label: "Seeing power dynamics before they become obvious.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "attachment_1",
-        dimension: "ATTACHMENT",
-        prompt: "When you start caring about someone, you usually:",
-        options: [
-            Choice {
-                label: "Protect autonomy first. Closeness should not consume me.",
-                value: 1,
-            },
-            Choice {
-                label: "Build gradually. Trust should have architecture.",
-                value: 2,
-            },
-            Choice {
-                label: "Move closer fast. Distance feels like uncertainty.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "attachment_2",
-        dimension: "ATTACHMENT",
-        prompt: "Silence from someone important for a day feels like:",
-        options: [
-            Choice {
-                label: "Normal. People have inner lives.",
-                value: 1,
-            },
-            Choice {
-                label: "Noticeable, but I do not start writing fiction.",
-                value: 2,
-            },
-            Choice {
-                label: "A whole narrative trying to form in my chest.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "attachment_3",
-        dimension: "ATTACHMENT",
-        prompt: "In relationships, you are most likely to fear:",
-        options: [
-            Choice {
-                label: "Being absorbed.",
-                value: 1,
-            },
-            Choice {
-                label: "Being misunderstood.",
-                value: 2,
-            },
-            Choice {
-                label: "Being left while still fully open.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "initiative_1",
-        dimension: "INITIATIVE",
-        prompt: "A hard conversation has to happen. You typically:",
-        options: [
-            Choice {
-                label: "Delay until the shape becomes unavoidable.",
-                value: 1,
-            },
-            Choice {
-                label: "Prepare, then handle it at the right moment.",
-                value: 2,
-            },
-            Choice {
-                label: "Do it now. Drag is worse than impact.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "initiative_2",
-        dimension: "INITIATIVE",
-        prompt: "When a good idea lands, you:",
-        options: [
-            Choice {
-                label: "Let it breathe. If it survives, it was real.",
-                value: 1,
-            },
-            Choice {
-                label: "Sketch the next moves and test viability.",
-                value: 2,
-            },
-            Choice {
-                label: "Move before doubt can turn elegant.",
-                value: 3,
-            },
-        ],
-    },
-    Question {
-        id: "initiative_3",
-        dimension: "INITIATIVE",
-        prompt: "Your relationship to momentum is:",
-        options: [
-            Choice {
-                label: "Intermittent. I start when the internal weather clears.",
-                value: 1,
-            },
-            Choice {
-                label: "Intentional. I prefer decisive but measured motion.",
-                value: 2,
-            },
-            Choice {
-                label: "Hungry. Action sharpens me.",
-                value: 3,
-            },
-        ],
+    Choice {
+        label: "Strongly agree",
+        value: 5,
     },
 ];
 
-pub const ARCHETYPES: [Archetype; 14] = [
-    Archetype {
-        slug: "quiet-monarch",
-        name: "Quiet Monarch",
-        subtitle: "private authority, measured heat",
-        tone: "composed",
-        signature: "M-H-M-L-H-M-L-M",
-        shadow: false,
-        essence: "You do not chase the center of the room. You make your own center and let people feel the gravity.",
-        gifts: &["steady authority", "clean boundaries", "taste without exhibitionism"],
-        fracture: "You can become so self-governed that help starts to feel like interference.",
-        support: &["delegate before resentment appears", "make praise audible, not assumed", "let intimacy see the uncurated draft"],
+const CONSTRUCTS: [Construct; 7] = [
+    Construct {
+        key: "ASSERTIVE_EXTRAVERSION",
+        label: "Assertive Extraversion",
     },
-    Archetype {
-        slug: "velvet-strategist",
-        name: "Velvet Strategist",
-        subtitle: "ambition wrapped in restraint",
-        tone: "surgical",
-        signature: "H-H-M-L-H-H-L-M",
-        shadow: false,
-        essence: "You are not loud about wanting power. You simply arrange yourself so it becomes difficult to deny you.",
-        gifts: &["long-game thinking", "political sensitivity", "high standards under pressure"],
-        fracture: "Every room starts to look like a map of leverage if you do not protect your softness on purpose.",
-        support: &["name the human cost early", "do one thing badly in public", "separate strategy from identity"],
+    Construct {
+        key: "TRUSTING_AGREEABLENESS",
+        label: "Trusting Agreeableness",
     },
-    Archetype {
-        slug: "glass-flame",
-        name: "Glass Flame",
-        subtitle: "radiant, persuasive, combustible",
-        tone: "electric",
-        signature: "M-M-H-H-M-M-H-H",
-        shadow: false,
-        essence: "You are easy to feel before you are easy to explain. People remember the weather you bring.",
-        gifts: &["charisma", "creative ignition", "emotional courage"],
-        fracture: "Intensity can look like truth to you even when it is only velocity.",
-        support: &["slow one major decision per week", "build recovery like a ritual", "do not let chemistry outrun evidence"],
+    Construct {
+        key: "PRODUCTIVE_CONSCIENTIOUSNESS",
+        label: "Productive Conscientiousness",
     },
-    Archetype {
-        slug: "silver-mirror",
-        name: "Silver Mirror",
-        subtitle: "attuned, receptive, dangerously observant",
-        tone: "luminous",
-        signature: "M-L-M-M-L-M-H-M",
-        shadow: false,
-        essence: "You notice the subtle shift, the swallowed sentence, the difference between a story and a confession.",
-        gifts: &["social perception", "careful listening", "relational intelligence"],
-        fracture: "You can become a reflection surface for everyone except yourself.",
-        support: &["say what you want before asking what others need", "practice direct asks", "treat your body as data, not background"],
+    Construct {
+        key: "NEGATIVE_EMOTIONALITY",
+        label: "Negative Emotionality",
     },
-    Archetype {
-        slug: "midnight-architect",
-        name: "Midnight Architect",
-        subtitle: "systems for feelings, blueprints for chaos",
-        tone: "precise",
-        signature: "M-M-L-M-H-H-L-M",
-        shadow: false,
-        essence: "You feel safer once the pattern appears. Structure is how you turn uncertainty into something usable.",
-        gifts: &["analysis", "systems thinking", "reliable complexity handling"],
-        fracture: "Not every living problem wants to become a model.",
-        support: &["test intuition before deleting it", "leave space for unfinished conversations", "share drafts sooner"],
+    Construct {
+        key: "OPEN_MINDEDNESS",
+        label: "Open-Mindedness",
     },
-    Archetype {
-        slug: "field-medic",
-        name: "Field Medic",
-        subtitle: "calm under pressure, costly to self",
-        tone: "grounded",
-        signature: "M-L-L-M-H-L-H-M",
-        shadow: false,
-        essence: "In the middle of emotional weather, you become startlingly useful. People lean toward your steadiness.",
-        gifts: &["containment", "practical care", "responsibility that comforts"],
-        fracture: "Your competence attracts dependence faster than your needs get voiced.",
-        support: &["rescue less, coach more", "rest before collapse", "differentiate being needed from being loved"],
+    Construct {
+        key: "ATTACHMENT_ANXIETY",
+        label: "Attachment Anxiety",
     },
-    Archetype {
-        slug: "ritual-machine",
-        name: "Ritual Machine",
-        subtitle: "discipline with a pulse",
-        tone: "relentless",
-        signature: "M-M-M-M-H-H-L-M",
-        shadow: false,
-        essence: "You trust process more than mood. Your life becomes legible when it can be repeated on purpose.",
-        gifts: &["follow-through", "focus", "quiet operational excellence"],
-        fracture: "Control can start masquerading as safety.",
-        support: &["schedule play without optimizing it", "let one day stay messy", "measure outcomes, not only obedience"],
+    Construct {
+        key: "ATTACHMENT_AVOIDANCE",
+        label: "Attachment Avoidance",
     },
-    Archetype {
-        slug: "borderless-dreamer",
-        name: "Borderless Dreamer",
-        subtitle: "porous, imaginative, difficult to pin down",
-        tone: "ethereal",
-        signature: "L-L-M-H-M-M-L-L",
-        shadow: false,
-        essence: "You move by atmosphere, possibility, and subtle pull. Life becomes vivid when it still has air around it.",
-        gifts: &["imagination", "gentle openness", "creative permeability"],
-        fracture: "Without edges, your gifts leak into other people's agendas.",
-        support: &["decide one non-negotiable before entering the room", "finish one small thing daily", "protect solitude from pure drift"],
+];
+
+pub const QUESTIONS: [Question; 28] = [
+    Question {
+        id: "assertive_extraversion_1",
+        dimension: "ASSERTIVE_EXTRAVERSION",
+        prompt: "I speak up quickly when a group needs direction.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
     },
-    Archetype {
-        slug: "storm-carrier",
-        name: "Storm Carrier",
-        subtitle: "the one who feels first and learns later",
-        tone: "volatile",
-        signature: "M-H-M-H-M-L-H-H",
-        shadow: false,
-        essence: "You have a rare capacity for force, devotion, and movement. Nothing about you is half-lit.",
-        gifts: &["courage", "devotion", "momentum under risk"],
-        fracture: "A storm can feel honest while still being misdirected.",
-        support: &["name the trigger before the target", "delay the text, not the truth", "train your exits"],
+    Question {
+        id: "assertive_extraversion_2",
+        dimension: "ASSERTIVE_EXTRAVERSION",
+        prompt: "I find it easy to start conversations with unfamiliar people.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
     },
-    Archetype {
-        slug: "charm-economy",
-        name: "Charm Economy",
-        subtitle: "socially intelligent, attention fluent",
-        tone: "polished",
-        signature: "M-H-H-M-M-M-H-M",
-        shadow: false,
-        essence: "You understand that perception shapes access. You know how a mood, line, or image can reposition a whole exchange.",
-        gifts: &["social timing", "presentation", "relationship brokerage"],
-        fracture: "If every interaction becomes curation, sincerity starts feeling inefficient.",
-        support: &["let one conversation stay unperformed", "trade polish for accuracy", "notice when approval becomes fuel"],
+    Question {
+        id: "assertive_extraversion_3",
+        dimension: "ASSERTIVE_EXTRAVERSION",
+        prompt: "I usually hold back even when I have something useful to add.",
+        reverse_keyed: true,
+        options: LIKERT_OPTIONS,
     },
-    Archetype {
-        slug: "loyal-sentinel",
-        name: "Loyal Sentinel",
-        subtitle: "slow to open, hard to move, built for endurance",
-        tone: "anchored",
-        signature: "L-M-M-L-H-M-M-L",
-        shadow: false,
-        essence: "You are difficult to impress and difficult to shake. Once you commit, you make steadiness feel luxurious.",
-        gifts: &["loyalty", "consistency", "protective instinct"],
-        fracture: "Guarding the perimeter can become a full-time identity.",
-        support: &["update people before they have to guess", "risk delight, not only stability", "make room for revision"],
+    Question {
+        id: "assertive_extraversion_4",
+        dimension: "ASSERTIVE_EXTRAVERSION",
+        prompt: "Being visible in a group tends to energize me.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
     },
-    Archetype {
-        slug: "soft-provocateur",
-        name: "Soft Provocateur",
-        subtitle: "gentle surface, disruptive questions",
-        tone: "subtle",
-        signature: "M-L-M-H-M-H-M-H",
-        shadow: false,
-        essence: "You rarely dominate a room, but you change its temperature by asking what everyone else edited out.",
-        gifts: &["fresh framing", "emotional intelligence", "quiet bravery"],
-        fracture: "You can provoke insight without admitting your own stake in it.",
-        support: &["own your desire in the room", "stay after the disruption", "practice closure, not only revelation"],
+    Question {
+        id: "trusting_agreeableness_1",
+        dimension: "TRUSTING_AGREEABLENESS",
+        prompt: "I usually assume good intent until I see evidence otherwise.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
     },
-    Archetype {
-        slug: "hollow-oracle",
-        name: "Hollow Oracle",
-        subtitle: "sees through everything, trusts almost nothing",
-        tone: "shadow",
-        signature: "L-H-H-L-H-H-L-H",
-        shadow: true,
-        essence: "Your pattern recognition is extreme. You can read the hidden arrangement quickly, but the cost is that innocence stops feeling accessible.",
-        gifts: &["sharp discernment", "x-ray vision for motive", "defensive intelligence"],
-        fracture: "When all interpretation becomes suspicion, even love begins to look staged.",
-        support: &["collect evidence for safety, not total control", "test one generous reading", "share fear before sarcasm"],
+    Question {
+        id: "trusting_agreeableness_2",
+        dimension: "TRUSTING_AGREEABLENESS",
+        prompt: "I try to stay considerate even when I disagree strongly.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
     },
-    Archetype {
-        slug: "crowned-ember",
-        name: "Crowned Ember",
-        subtitle: "royal standards, scorched nervous system",
-        tone: "shadow",
-        signature: "H-H-M-H-H-M-H-H",
-        shadow: true,
-        essence: "You burn toward excellence with real force. The trouble is that everything starts to feel urgent enough to sacrifice yourself for.",
-        gifts: &["drive", "magnetism", "high-voltage execution"],
-        fracture: "You can confuse exhaustion with significance and attention with love.",
-        support: &["protect recovery like a strategic asset", "let one ambition stay unfinished overnight", "seek witnesses, not just audiences"],
+    Question {
+        id: "trusting_agreeableness_3",
+        dimension: "TRUSTING_AGREEABLENESS",
+        prompt: "I expect people to exploit softness if they get the chance.",
+        reverse_keyed: true,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "trusting_agreeableness_4",
+        dimension: "TRUSTING_AGREEABLENESS",
+        prompt: "I can be direct without becoming harsh.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "productive_conscientiousness_1",
+        dimension: "PRODUCTIVE_CONSCIENTIOUSNESS",
+        prompt: "I make concrete plans before important work begins.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "productive_conscientiousness_2",
+        dimension: "PRODUCTIVE_CONSCIENTIOUSNESS",
+        prompt: "I finish routine tasks even when I am bored.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "productive_conscientiousness_3",
+        dimension: "PRODUCTIVE_CONSCIENTIOUSNESS",
+        prompt: "My priorities change faster than my follow-through.",
+        reverse_keyed: true,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "productive_conscientiousness_4",
+        dimension: "PRODUCTIVE_CONSCIENTIOUSNESS",
+        prompt: "I keep promises to myself even when nobody is watching.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "negative_emotionality_1",
+        dimension: "NEGATIVE_EMOTIONALITY",
+        prompt: "Small setbacks can stay with me longer than I want.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "negative_emotionality_2",
+        dimension: "NEGATIVE_EMOTIONALITY",
+        prompt: "My mood shifts quickly when I am under pressure.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "negative_emotionality_3",
+        dimension: "NEGATIVE_EMOTIONALITY",
+        prompt: "I recover quickly after an upsetting interaction.",
+        reverse_keyed: true,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "negative_emotionality_4",
+        dimension: "NEGATIVE_EMOTIONALITY",
+        prompt: "I start worrying about problems before they fully arrive.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "open_mindedness_1",
+        dimension: "OPEN_MINDEDNESS",
+        prompt: "New ideas energize me even before I know whether they will work.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "open_mindedness_2",
+        dimension: "OPEN_MINDEDNESS",
+        prompt: "I like approaching the same problem from several different angles.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "open_mindedness_3",
+        dimension: "OPEN_MINDEDNESS",
+        prompt: "I prefer familiar methods over experimentation.",
+        reverse_keyed: true,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "open_mindedness_4",
+        dimension: "OPEN_MINDEDNESS",
+        prompt: "Art, language, or design often changes how I think.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_anxiety_1",
+        dimension: "ATTACHMENT_ANXIETY",
+        prompt: "When someone I care about goes quiet, I start to worry about what it means.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_anxiety_2",
+        dimension: "ATTACHMENT_ANXIETY",
+        prompt: "I need a lot of reassurance to feel secure in close relationships.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_anxiety_3",
+        dimension: "ATTACHMENT_ANXIETY",
+        prompt: "I worry that people I love may pull away without warning.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_anxiety_4",
+        dimension: "ATTACHMENT_ANXIETY",
+        prompt: "Uncertainty in a close relationship does not unsettle me much.",
+        reverse_keyed: true,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_avoidance_1",
+        dimension: "ATTACHMENT_AVOIDANCE",
+        prompt: "I get uncomfortable when someone wants more emotional closeness than I do.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_avoidance_2",
+        dimension: "ATTACHMENT_AVOIDANCE",
+        prompt: "Depending on other people feels risky to me.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_avoidance_3",
+        dimension: "ATTACHMENT_AVOIDANCE",
+        prompt: "I keep important feelings to myself even in close relationships.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
+    },
+    Question {
+        id: "attachment_avoidance_4",
+        dimension: "ATTACHMENT_AVOIDANCE",
+        prompt: "Letting someone see my emotional needs feels difficult.",
+        reverse_keyed: false,
+        options: LIKERT_OPTIONS,
     },
 ];
 
@@ -729,8 +326,9 @@ pub fn questions() -> &'static [Question] {
 pub fn score(request: ScoreRequest) -> Result<ScoreResponse, ScoreError> {
     let mut missing = Vec::new();
     let mut totals = BTreeMap::new();
-    for (key, _) in DIMENSIONS {
-        totals.insert(key, 0_u8);
+
+    for construct in CONSTRUCTS {
+        totals.insert(construct.key, 0_u8);
     }
 
     for question in QUESTIONS {
@@ -738,142 +336,147 @@ pub fn score(request: ScoreRequest) -> Result<ScoreResponse, ScoreError> {
             missing.push(question.id);
             continue;
         };
-        if !matches!(value, 1..=3) {
+
+        if !matches!(value, 1..=5) {
             return Err(ScoreError::InvalidAnswer {
                 question_id: question.id.to_string(),
                 value: *value,
             });
         }
+
+        let scored = if question.reverse_keyed {
+            6 - *value
+        } else {
+            *value
+        };
+
         *totals
             .get_mut(question.dimension)
-            .expect("dimension exists") += *value;
+            .expect("construct exists") += scored;
     }
 
     if !missing.is_empty() {
         return Err(ScoreError::MissingAnswers(missing));
     }
 
-    let signature_bands = DIMENSIONS
+    let constructs = CONSTRUCTS
         .iter()
-        .map(|(key, _)| band_letter(*totals.get(key).expect("dimension total exists")))
-        .collect::<Vec<_>>();
+        .map(|construct| {
+            let raw_total = *totals.get(construct.key).expect("construct total exists");
+            let mean_score = raw_total as f32 / 4.0;
+            let display_band = display_band(mean_score);
 
-    let signature = signature_bands.join("-");
-    let archetype = nearest_archetype(&signature);
-    let distance = signature_distance(&signature, archetype.signature);
-    let similarity = (((16 - distance) as f32 / 16.0) * 100.0).round() as u8;
-
-    let dimensions = DIMENSIONS
-        .iter()
-        .map(|(key, label)| {
-            let total = *totals.get(key).expect("dimension total exists");
-            let band = band_label(total);
-            DimensionScore {
-                key,
-                label,
-                total,
-                band,
-                interpretation: interpretation(key, band),
+            ConstructScore {
+                key: construct.key,
+                label: construct.label,
+                raw_total,
+                mean_score,
+                display_band,
+                interpretation: interpretation(construct.key, display_band),
             }
         })
         .collect::<Vec<_>>();
 
-    let narrative = Narrative {
-        headline: format!("{} is your dominant Vincent pattern.", archetype.name),
-        reflection: format!(
-            "Your profile concentrates around {}. The model reads you as someone with {}",
-            archetype.subtitle, archetype.essence.to_lowercase()
-        ),
-        caution: format!(
-            "{} This assessment is reflective, not clinical; treat it as a sharp lens, not a diagnosis.",
-            archetype.fracture
-        ),
-    };
-
     Ok(ScoreResponse {
-        archetype,
-        similarity,
-        signature,
-        shadow_triggered: archetype.shadow,
-        dimensions,
-        narrative,
+        constructs,
+        item_count: QUESTIONS.len(),
+        response_scale: "5-point agreement",
+        note: "Vincent now returns continuous construct scores first. Any profile label should be treated as a reflective summary rather than a diagnostic category.",
     })
 }
 
-fn band_letter(total: u8) -> &'static str {
-    match total {
-        0..=4 => "L",
-        5..=6 => "M",
-        _ => "H",
+fn display_band(mean_score: f32) -> &'static str {
+    if mean_score < 1.8 {
+        "Mostly disagree"
+    } else if mean_score < 2.6 {
+        "Somewhat disagree"
+    } else if mean_score < 3.4 {
+        "Mixed"
+    } else if mean_score < 4.2 {
+        "Somewhat agree"
+    } else {
+        "Mostly agree"
     }
 }
 
-fn band_label(total: u8) -> &'static str {
-    match total {
-        0..=4 => "Low",
-        5..=6 => "Medium",
-        _ => "High",
-    }
-}
-
-fn band_value(band: &str) -> i16 {
-    match band {
-        "Low" | "L" => 1,
-        "Medium" | "M" => 2,
-        "High" | "H" => 3,
-        _ => 2,
-    }
-}
-
-fn nearest_archetype(signature: &str) -> &'static Archetype {
-    ARCHETYPES
-        .iter()
-        .min_by_key(|archetype| signature_distance(signature, archetype.signature))
-        .expect("archetypes configured")
-}
-
-fn signature_distance(left: &str, right: &str) -> i16 {
-    left.split('-')
-        .zip(right.split('-'))
-        .map(|(a, b)| (band_value(a) - band_value(b)).abs())
-        .sum()
-}
-
-fn interpretation(dimension: &str, band: &str) -> &'static str {
-    match (dimension, band) {
-        ("DRIVE", "Low") => "You protect desire from becoming a performance obligation.",
-        ("DRIVE", "Medium") => "You want impact, but not at the price of self-erasure.",
-        ("DRIVE", "High") => "You feel the hierarchy instantly and want agency inside it.",
-        ("BOUNDARY", "Low") => {
-            "Your first move is accommodation; your body pays the invoice later."
+fn interpretation(construct: &str, band: &str) -> &'static str {
+    match (construct, band) {
+        ("ASSERTIVE_EXTRAVERSION", "Mostly disagree")
+        | ("ASSERTIVE_EXTRAVERSION", "Somewhat disagree") => {
+            "You tend to conserve social energy and may wait before stepping into the center of a room."
         }
-        ("BOUNDARY", "Medium") => "You can flex without losing the thread of yourself.",
-        ("BOUNDARY", "High") => "Your limits are crisp, and sometimes colder than you intend.",
-        ("EXPOSURE", "Low") => "Privacy is how you keep your interior signal clean.",
-        ("EXPOSURE", "Medium") => "You know the difference between concealment and curation.",
-        ("EXPOSURE", "High") => {
-            "You understand staging, influence, and the economics of perception."
+        ("ASSERTIVE_EXTRAVERSION", "Mixed") => {
+            "You can step forward when needed without needing constant visibility."
         }
-        ("VOLATILITY", "Low") => "Feeling is present, but rarely allowed to become theater.",
-        ("VOLATILITY", "Medium") => "Emotion moves through you with texture rather than chaos.",
-        ("VOLATILITY", "High") => "You experience life at high voltage and rarely in grayscale.",
-        ("DISCIPLINE", "Low") => "Freedom matters enough that systems can feel suspicious.",
-        ("DISCIPLINE", "Medium") => "You can sustain effort when the structure still feels human.",
-        ("DISCIPLINE", "High") => "You trust ritual to hold what mood cannot.",
-        ("INTERPRETATION", "Low") => {
-            "You resist paranoid over-reading and preserve room for grace."
+        ("ASSERTIVE_EXTRAVERSION", "Somewhat agree")
+        | ("ASSERTIVE_EXTRAVERSION", "Mostly agree") => {
+            "You tend to move toward visibility, participation, and interpersonal impact."
         }
-        ("INTERPRETATION", "Medium") => {
-            "You read nuance without automatically converting it into danger."
+        ("TRUSTING_AGREEABLENESS", "Mostly disagree")
+        | ("TRUSTING_AGREEABLENESS", "Somewhat disagree") => {
+            "You may protect yourself by reading threat or leverage into relationships early."
         }
-        ("INTERPRETATION", "High") => "You see subtext fast, especially when power is involved.",
-        ("ATTACHMENT", "Low") => "Autonomy is your first language in love.",
-        ("ATTACHMENT", "Medium") => "You want connection that can withstand reality.",
-        ("ATTACHMENT", "High") => "Closeness is vivid for you; absence can become a story quickly.",
-        ("INITIATIVE", "Low") => "You move when internal certainty forms, not before.",
-        ("INITIATIVE", "Medium") => "You favor deliberate motion over dramatic starts.",
-        ("INITIATIVE", "High") => "Action is how you create clarity, not just express it.",
-        _ => "This dimension is still being calibrated.",
+        ("TRUSTING_AGREEABLENESS", "Mixed") => {
+            "You can stay warm and direct without assuming everyone is either safe or dangerous."
+        }
+        ("TRUSTING_AGREEABLENESS", "Somewhat agree")
+        | ("TRUSTING_AGREEABLENESS", "Mostly agree") => {
+            "You tend to lead with trust, cooperation, and interpersonal softness."
+        }
+        ("PRODUCTIVE_CONSCIENTIOUSNESS", "Mostly disagree")
+        | ("PRODUCTIVE_CONSCIENTIOUSNESS", "Somewhat disagree") => {
+            "You may prefer flexibility over structure, even when that makes follow-through uneven."
+        }
+        ("PRODUCTIVE_CONSCIENTIOUSNESS", "Mixed") => {
+            "You can work with structure without becoming fully ruled by it."
+        }
+        ("PRODUCTIVE_CONSCIENTIOUSNESS", "Somewhat agree")
+        | ("PRODUCTIVE_CONSCIENTIOUSNESS", "Mostly agree") => {
+            "You tend to rely on planning, consistency, and self-directed follow-through."
+        }
+        ("NEGATIVE_EMOTIONALITY", "Mostly disagree")
+        | ("NEGATIVE_EMOTIONALITY", "Somewhat disagree") => {
+            "Stress and emotional setbacks are less likely to linger or escalate quickly for you."
+        }
+        ("NEGATIVE_EMOTIONALITY", "Mixed") => {
+            "You seem able to feel pressure without being dominated by it."
+        }
+        ("NEGATIVE_EMOTIONALITY", "Somewhat agree")
+        | ("NEGATIVE_EMOTIONALITY", "Mostly agree") => {
+            "You may feel threat, worry, or emotional shifts with unusual intensity or persistence."
+        }
+        ("OPEN_MINDEDNESS", "Mostly disagree") | ("OPEN_MINDEDNESS", "Somewhat disagree") => {
+            "You may prefer familiar tools and proven routes over novelty for its own sake."
+        }
+        ("OPEN_MINDEDNESS", "Mixed") => {
+            "You can appreciate new ideas while still keeping one foot in the practical."
+        }
+        ("OPEN_MINDEDNESS", "Somewhat agree") | ("OPEN_MINDEDNESS", "Mostly agree") => {
+            "You tend to seek novelty, multiple perspectives, and conceptual range."
+        }
+        ("ATTACHMENT_ANXIETY", "Mostly disagree")
+        | ("ATTACHMENT_ANXIETY", "Somewhat disagree") => {
+            "Relational uncertainty may feel manageable without frequent reassurance."
+        }
+        ("ATTACHMENT_ANXIETY", "Mixed") => {
+            "You appear able to care deeply without reading too much danger into temporary distance."
+        }
+        ("ATTACHMENT_ANXIETY", "Somewhat agree")
+        | ("ATTACHMENT_ANXIETY", "Mostly agree") => {
+            "Silence, ambiguity, or shifts in closeness may trigger fast concern or reassurance-seeking."
+        }
+        ("ATTACHMENT_AVOIDANCE", "Mostly disagree")
+        | ("ATTACHMENT_AVOIDANCE", "Somewhat disagree") => {
+            "Emotional dependence and closeness may feel relatively accessible to you."
+        }
+        ("ATTACHMENT_AVOIDANCE", "Mixed") => {
+            "You appear able to value closeness while still keeping healthy personal boundaries."
+        }
+        ("ATTACHMENT_AVOIDANCE", "Somewhat agree")
+        | ("ATTACHMENT_AVOIDANCE", "Mostly agree") => {
+            "You may protect autonomy by keeping emotional needs or dependence at a distance."
+        }
+        _ => "This construct is still being calibrated.",
     }
 }
 
@@ -893,26 +496,41 @@ mod tests {
     fn score_rejects_invalid_answer_values() {
         let mut answers = BTreeMap::new();
         for question in QUESTIONS {
-            answers.insert(question.id.to_string(), 1);
+            answers.insert(question.id.to_string(), 3);
         }
-        answers.insert("drive_1".to_string(), 9);
+        answers.insert("assertive_extraversion_1".to_string(), 9);
         let result = score(ScoreRequest { answers });
         assert!(result.is_err());
     }
 
     #[test]
-    fn score_returns_an_archetype() {
+    fn score_returns_construct_scores() {
         let mut answers = BTreeMap::new();
         for question in QUESTIONS {
-            let value = match question.dimension {
-                "DRIVE" | "DISCIPLINE" | "INITIATIVE" => 3,
-                "BOUNDARY" | "INTERPRETATION" => 2,
-                _ => 1,
-            };
-            answers.insert(question.id.to_string(), value);
+            answers.insert(question.id.to_string(), 4);
         }
         let result = score(ScoreRequest { answers }).expect("assessment should score");
-        assert!(!result.archetype.name.is_empty());
-        assert_eq!(result.dimensions.len(), 8);
+        assert_eq!(result.constructs.len(), 7);
+        assert_eq!(result.item_count, 28);
+        assert_eq!(result.response_scale, "5-point agreement");
+    }
+
+    #[test]
+    fn score_reverse_keys_items() {
+        let mut answers = BTreeMap::new();
+        for question in QUESTIONS {
+            let value = if question.reverse_keyed { 5 } else { 1 };
+            answers.insert(question.id.to_string(), value);
+        }
+
+        let result = score(ScoreRequest { answers }).expect("assessment should score");
+        let assertive = result
+            .constructs
+            .iter()
+            .find(|score| score.key == "ASSERTIVE_EXTRAVERSION")
+            .expect("assertive extraversion should exist");
+
+        assert_eq!(assertive.raw_total, 4);
+        assert!((assertive.mean_score - 1.0).abs() < f32::EPSILON);
     }
 }

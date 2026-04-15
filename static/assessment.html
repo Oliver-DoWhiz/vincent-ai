@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vincent AI Assessment</title>
+    <meta
+      name="description"
+      content="Take the Vincent assessment and receive a construct-first profile plus an editorial persona lens."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,128 +22,177 @@
         document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
       })();
     </script>
-    <link rel="stylesheet" href="/static/app.css?v=20260412i" />
-    <script defer src="/static/app.js?v=20260412i"></script>
+    <link rel="stylesheet" href="/static/app.css?v=20260415a" />
+    <script defer src="/static/app.js?v=20260415a"></script>
   </head>
   <body data-page="assessment">
     <div class="site-shell">
-      <header class="topbar shell-compact">
-        <a href="/" class="brand" data-preserve-lang>
+      <header class="site-header shell">
+        <a href="/" class="brand brand-large" aria-label="Vincent AI home" data-preserve-lang>
           <span class="brand-mark">V</span>
           <span class="brand-copy">
             <strong>Vincent AI</strong>
             <small id="brandTagline">reflective assessment</small>
           </span>
         </a>
-        <div class="top-actions">
-          <a href="/" class="text-link" id="homeLink" data-preserve-lang>Home</a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/assessment" id="navAssessment" class="nav-link active" data-preserve-lang>
+            Assessment
+          </a>
+          <a href="/personas" id="navPersonas" class="nav-link" data-preserve-lang>
+            Personas
+          </a>
+          <a href="/framework" id="navFramework" class="nav-link" data-preserve-lang>
+            Framework
+          </a>
+        </nav>
+
+        <div class="site-actions">
           <div class="locale-toggle" aria-label="Language switch">
             <button type="button" class="locale-button" data-lang-target="en">EN</button>
             <button type="button" class="locale-button" data-lang-target="zh">中文</button>
           </div>
+          <a href="/" class="button button-secondary" id="headerHomeLink" data-preserve-lang>
+            Home
+          </a>
         </div>
       </header>
 
-      <main class="shell-compact assessment-page">
-        <section class="task-header">
-          <div class="task-header-top">
-            <div>
-              <p class="eyebrow" id="taskEyebrow">Assessment</p>
-              <h1 id="taskTitle">Pick what feels most typical.</h1>
-              <p class="lead-small" id="taskLead">One choice per question. Go back anytime.</p>
-            </div>
-            <div class="progress-meta">
-              <strong id="progressLabel">Question 1 of 24</strong>
-              <span id="progressPercent">0% done</span>
-            </div>
+      <main class="shell assessment-page">
+        <section class="assessment-intro surface">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="taskEyebrow">Assessment</p>
+            <h1 id="taskTitle">Reflective personality and attachment check-in</h1>
+            <p class="section-lead" id="taskLead">
+              28 items across 7 constructs. You get continuous scores first, then a Vincent
+              persona lens layered on top.
+            </p>
+            <p class="helper-note hidden" id="taskStatus"></p>
           </div>
-          <div class="progress-track">
-            <div class="progress-bar" id="progressBar"></div>
+          <div class="progress-meta-card">
+            <strong id="progressLabel">Preparing questions</strong>
+            <span id="progressPercent">0% answered</span>
+            <span id="progressAnswered">0 of 0 answered</span>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
           </div>
         </section>
 
-        <article class="surface card question-card" id="questionCard">
-          <div class="question-meta">
-            <div class="question-meta-left">
-              <span class="question-number" id="questionIndex">01</span>
-              <span class="question-dimension" id="dimensionBadge">Loading</span>
+        <div class="assessment-layout">
+          <article class="surface question-card" id="questionCard">
+            <div class="question-meta">
+              <div class="question-meta-left">
+                <span class="question-number" id="questionIndex">--</span>
+                <span class="question-dimension" id="dimensionBadge">Loading</span>
+              </div>
             </div>
-            <span class="helper-note" id="progressAnswered">0 of 24 answered</span>
-          </div>
-          <h2 id="questionPrompt">Loading your first question…</h2>
-          <div id="optionList" class="option-list"></div>
-          <div class="actions-row">
-            <button id="previousButton" class="button button-secondary button-reset" type="button">
-              Previous
-            </button>
-            <button id="nextButton" class="button button-primary button-reset" type="button">
-              Continue
-            </button>
-          </div>
-        </article>
-
-        <article class="surface card result-card hidden" id="resultCard">
-          <p class="eyebrow" id="resultEyebrow">Your Vincent pattern</p>
-          <p class="result-headline" id="resultHeadline"></p>
-
-          <div class="result-title-row">
-            <div>
-              <h2 id="resultName">Archetype</h2>
-              <p class="result-subtitle" id="resultSubtitle"></p>
+            <h2 id="questionPrompt">Loading the assessment…</h2>
+            <div id="optionList" class="option-list"></div>
+            <div class="actions-row">
+              <button id="previousButton" class="button button-secondary button-reset" type="button">
+                Previous
+              </button>
+              <button id="nextButton" class="button button-primary button-reset" type="button">
+                Continue
+              </button>
             </div>
-            <div class="result-badges">
-              <span class="info-pill" id="resultTone">Tone</span>
-              <span class="info-pill hidden" id="shadowBadge">Shadow state</span>
+          </article>
+
+          <aside class="assessment-aside">
+            <section class="surface aside-card">
+              <p class="eyebrow" id="assessmentAsideEyebrow">Answer tips</p>
+              <h3 id="assessmentAsideTitle">Use your recent pattern, not your ideal self.</h3>
+              <div id="assessmentTipsList" class="tip-list"></div>
+            </section>
+
+            <section class="surface aside-card">
+              <p class="eyebrow" id="assessmentPromiseEyebrow">What you get</p>
+              <div id="assessmentPromiseList" class="promise-list"></div>
+            </section>
+          </aside>
+        </div>
+
+        <article class="surface result-card hidden" id="resultCard">
+          <div class="result-hero-grid">
+            <div class="result-persona-figure" id="resultPersonaFigure"></div>
+            <div class="result-persona-copy">
+              <p class="eyebrow" id="resultEyebrow">Profile summary</p>
+              <div class="family-badge" id="resultPersonaFamily">Persona family</div>
+              <h2 id="resultPersonaName">Persona</h2>
+              <p class="result-subtitle" id="resultPersonaSubtitle"></p>
+              <p class="result-copy" id="resultPersonaSummary"></p>
+              <div class="pill-row" id="resultPersonaPills"></div>
+              <div class="actions-row compact">
+                <a
+                  href="/personas"
+                  id="resultPersonaLink"
+                  class="button button-secondary"
+                  data-preserve-lang
+                >
+                  Explore persona
+                </a>
+                <button id="restartButton" class="button button-primary button-reset" type="button">
+                  Take again
+                </button>
+              </div>
             </div>
           </div>
 
           <div class="metric-grid">
             <div class="metric-card">
-              <label id="similarityLabel">Similarity</label>
-              <strong id="resultSimilarity">0%</strong>
+              <label id="metricPrimaryLabel">Items completed</label>
+              <strong id="metricPrimaryValue">28</strong>
             </div>
             <div class="metric-card">
-              <label id="signatureLabel">Signature</label>
-              <strong id="resultSignature">-</strong>
+              <label id="metricSecondaryLabel">Response format</label>
+              <strong id="metricSecondaryValue">5-point agreement scale</strong>
             </div>
           </div>
 
-          <p class="result-copy" id="resultEssence"></p>
-          <p class="result-copy subtle-copy" id="resultReflection"></p>
-
           <section class="surface inset-card">
-            <h3 id="whyTitle">Why this result</h3>
+            <div class="section-heading compact">
+              <p class="eyebrow" id="resultHeadline">Construct-first readout</p>
+              <h3 id="resultName">Your measured profile</h3>
+              <p class="section-lead" id="resultSubtitle">
+                7 constructs across 28 self-report items
+              </p>
+            </div>
+            <p class="result-copy" id="resultEssence"></p>
+            <p class="result-copy subtle-copy" id="resultReflection">
+              These scores summarize how strongly you agreed with each 4-item construct. They are
+              not probabilities, percentiles, or clinical risk estimates.
+            </p>
             <div id="dimensionBars" class="dimension-list"></div>
           </section>
 
-          <section class="surface inset-card split-info-card">
-            <div class="two-column-grid">
-              <div>
-                <h3 id="giftsTitle">Gifts</h3>
-                <ul id="resultGifts" class="feature-list compact-list"></ul>
-              </div>
-              <div>
-                <h3 id="supportTitle">Support</h3>
-                <ul id="resultSupport" class="feature-list compact-list"></ul>
-              </div>
-            </div>
-          </section>
-
           <section class="result-note">
-            <p id="resultFracture" class="subtle-copy"></p>
-            <p id="resultCaution" class="microcopy"></p>
+            <p id="resultNote" class="subtle-copy">
+              Vincent now returns continuous construct scores first. Any label layered on top
+              should stay a reflective summary rather than a diagnostic category.
+            </p>
+            <p id="resultCaution" class="microcopy">
+              This assessment is reflective only. It is not a diagnosis, treatment plan, or
+              crisis service.
+            </p>
           </section>
-
-          <div class="actions-row">
-            <button id="restartButton" class="button button-secondary button-reset" type="button">
-              Take again
-            </button>
-            <a href="/" class="button button-primary" id="backHomeButton" data-preserve-lang>
-              Back home
-            </a>
-          </div>
         </article>
       </main>
+
+      <footer class="site-footer shell">
+        <div class="footer-copy">
+          <strong>Vincent AI</strong>
+          <p id="footerNote">
+            Reflective personality and attachment check-in with an editorial persona layer.
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="/assessment" id="footerAssessment" data-preserve-lang>Assessment</a>
+          <a href="/personas" id="footerPersonas" data-preserve-lang>Personas</a>
+          <a href="/framework" id="footerFramework" data-preserve-lang>Framework</a>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

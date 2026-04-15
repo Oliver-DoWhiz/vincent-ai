@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vincent Personas</title>
+    <meta
+      name="description"
+      content="Explore the Vincent persona directory built on top of the construct-first assessment."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var hour = new Date().getHours();
+        var theme = hour >= 6 && hour < 18 ? "day" : "night";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/app.css?v=20260415a" />
+    <script defer src="/static/app.js?v=20260415a"></script>
+  </head>
+  <body data-page="personas">
+    <div class="site-shell">
+      <header class="site-header shell">
+        <a href="/" class="brand brand-large" aria-label="Vincent AI home" data-preserve-lang>
+          <span class="brand-mark">V</span>
+          <span class="brand-copy">
+            <strong>Vincent AI</strong>
+            <small id="brandTagline">reflective assessment</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/assessment" id="navAssessment" class="nav-link" data-preserve-lang>
+            Assessment
+          </a>
+          <a href="/personas" id="navPersonas" class="nav-link active" data-preserve-lang>
+            Personas
+          </a>
+          <a href="/framework" id="navFramework" class="nav-link" data-preserve-lang>
+            Framework
+          </a>
+        </nav>
+
+        <div class="site-actions">
+          <div class="locale-toggle" aria-label="Language switch">
+            <button type="button" class="locale-button" data-lang-target="en">EN</button>
+            <button type="button" class="locale-button" data-lang-target="zh">中文</button>
+          </div>
+          <a href="/assessment" id="headerCta" class="button button-primary" data-preserve-lang>
+            Start assessment
+          </a>
+        </div>
+      </header>
+
+      <main class="shell directory-page">
+        <section class="directory-hero surface">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="personasEyebrow">Persona directory</p>
+            <h1 id="personasTitle">Every Vincent result lens, all in one place.</h1>
+            <p class="section-lead" id="personasLead">
+              These personas are editorial overlays built from broader construct patterns. They are
+              meant to make results easier to remember, not more clinical.
+            </p>
+          </div>
+        </section>
+
+        <section class="section-stack">
+          <div id="personasFamilyGrid" class="family-stack family-stack-dense"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer shell">
+        <div class="footer-copy">
+          <strong>Vincent AI</strong>
+          <p id="footerNote">
+            Reflective personality and attachment check-in with an editorial persona layer.
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="/assessment" id="footerAssessment" data-preserve-lang>Assessment</a>
+          <a href="/personas" id="footerPersonas" data-preserve-lang>Personas</a>
+          <a href="/framework" id="footerFramework" data-preserve-lang>Framework</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

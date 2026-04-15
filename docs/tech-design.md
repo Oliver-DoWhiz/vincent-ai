@@ -2,7 +2,8 @@
 
 ## Document intent
 
-This design doc follows a compact engineering-design pattern influenced by common technical design templates: context, goals, architecture, data model, APIs, testing, and future evolution.
+This design doc follows a compact engineering format: context, goals,
+architecture, data model, APIs, testing, and future evolution.
 
 ## Context
 
@@ -11,13 +12,14 @@ The MVP needs to be:
 - local-first
 - easy to review
 - fast to iterate
-- consistent with the existing DoWhiz preference for Rust-friendly stacks
+- consistent with a Rust-friendly stack
 
 ## Goals
 
 - ship a working local product with a polished landing page and assessment
 - keep the scoring logic explainable
 - make the codebase modular enough for future persistence and AI layers
+- replace the old archetype-first scoring path with a construct-first model
 
 ## Non-goals
 
@@ -25,7 +27,8 @@ The MVP needs to be:
 - payments
 - analytics
 - multi-tenant storage
-- LLM orchestration
+- formal validation tooling inside the app
+- percentile or probability estimation without calibration data
 
 ## Architecture overview
 
@@ -51,7 +54,7 @@ Browser
   -> GET /               -> landing.html
   -> GET /assessment     -> assessment.html
   -> GET /api/questions  -> question catalog JSON
-  -> POST /api/score     -> scoring engine
+  -> POST /api/score     -> construct scoring engine
   -> GET /static/*       -> app.css / app.js
 ```
 
@@ -61,18 +64,19 @@ Browser
 
 Contains:
 
-- question catalog
-- archetype catalog
-- score request / response types
-- signature and nearest-match logic
-- per-dimension interpretations
+- 28-item question catalog
+- 7 construct definitions
+- reverse-keying metadata
+- score request and response types
+- continuous construct scoring
+- short interpretation logic
 
 ### `src/web.rs`
 
 Contains:
 
 - app router
-- landing / assessment route handlers
+- landing and assessment route handlers
 - question API
 - score API
 - static serving
@@ -93,57 +97,52 @@ Contains:
 - `id`
 - `dimension`
 - `prompt`
-- `options[3]`
+- `reverse_keyed`
+- `options[5]`
 
 ### ScoreRequest
 
 - `answers: BTreeMap<String, u8>`
 
+### ConstructScore
+
+- `key`
+- `label`
+- `raw_total`
+- `mean_score`
+- `display_band`
+- `interpretation`
+
 ### ScoreResponse
 
-- `archetype`
-- `similarity`
-- `signature`
-- `shadow_triggered`
-- `dimensions[]`
-- `narrative`
-
-### Archetype
-
-- `slug`
-- `name`
-- `subtitle`
-- `tone`
-- `signature`
-- `shadow`
-- `essence`
-- `gifts`
-- `fracture`
-- `support`
+- `constructs[]`
+- `item_count`
+- `response_scale`
+- `note`
 
 ## Scoring design
 
 ### Pipeline
 
-1. Validate all 24 answers exist and are in `1..=3`.
-2. Sum scores by dimension.
-3. Bucket each dimension into `L`, `M`, or `H`.
-4. Join the 8 bands into a signature.
-5. Compute nearest archetype via Manhattan distance over the 8-band signature.
-6. Return archetype + dimensional explanation.
+1. Validate that all 28 answers exist and are in `1..=5`.
+2. Reverse-score any item marked `reverse_keyed`.
+3. Sum scores by construct.
+4. Compute each construct mean score.
+5. Derive a display-only response band from the mean.
+6. Return construct scores plus a non-diagnostic note.
 
 ### Why this design
 
+- more defensible than a direct archetype matcher
 - explainable enough for a premium consumer product
 - easy to unit test
-- easy to add or remove archetypes
-- easy to tune copy independent of the algorithm
+- easier to align with future validation work
 
 ### Tradeoffs
 
-- not psychometrically validated
-- archetype assignment is authorial and editorial, not scientific truth
-- nearest-signature methods compress nuance
+- still a self-report MVP, not a validated instrument
+- display bands are descriptive, not normative
+- short scales improve usability but reduce precision until validation work exists
 
 ## Frontend design
 
@@ -151,20 +150,21 @@ Contains:
 
 - editorial hero
 - premium palette and typography
-- clear articulation of the system and guardrails
+- clear articulation of the reflective, non-clinical stance
 
 ### Assessment
 
 - single-question flow
 - progress bar
-- dimension completion chips
-- result card with dimensional bars and narrative sections
+- shared 5-point response scale
+- bilingual copy support
+- result card with construct bars and brief interpretations
 
 ## Error handling
 
 - incomplete answer payloads return `400`
 - invalid answer values return `400`
-- frontend handles fetch failure with a graceful message
+- frontend handles fetch failure with a graceful retry state
 
 ## Testing strategy
 
@@ -172,19 +172,21 @@ Contains:
 
 - incomplete payload rejection
 - invalid answer rejection
-- normal scoring returns an archetype
+- construct scoring returns the expected shape
+- reverse-keyed items score correctly
 
 ### Integration tests
 
 - landing route returns `200`
-- question API returns the full catalog
+- question API returns the full 28-item catalog
 - score API accepts a valid payload
+- score API rejects incomplete and invalid payloads
 
-## Security / privacy posture
+## Security and privacy posture
 
 For the MVP:
 
-- no persistence
+- no persistence on the server
 - no accounts
 - no PII storage
 - no hidden background tracking in code
@@ -201,8 +203,8 @@ For future versions:
 ### Near term
 
 - saved results
-- archetype share cards
-- richer copy variants
+- richer interpretive copy
+- bilingual wording review
 
 ### Medium term
 
@@ -213,5 +215,7 @@ For future versions:
 ### Long term
 
 - psychometric validation program
+- calibration for percentiles if justified by data
 - safety workflows
-- clinician-reviewed content if the product moves closer to wellness or care
+- coach- or clinician-reviewed content only if the product moves closer to wellness or care
+- research notes in [docs/psychometric-redesign.md](./psychometric-redesign.md)

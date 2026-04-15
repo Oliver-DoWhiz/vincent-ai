@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vincent Persona</title>
+    <meta
+      name="description"
+      content="Explore a Vincent persona detail page and its underlying construct tendencies."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var hour = new Date().getHours();
+        var theme = hour >= 6 && hour < 18 ? "day" : "night";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/app.css?v=20260415a" />
+    <script defer src="/static/app.js?v=20260415a"></script>
+  </head>
+  <body data-page="persona">
+    <div class="site-shell">
+      <header class="site-header shell">
+        <a href="/" class="brand brand-large" aria-label="Vincent AI home" data-preserve-lang>
+          <span class="brand-mark">V</span>
+          <span class="brand-copy">
+            <strong>Vincent AI</strong>
+            <small id="brandTagline">reflective assessment</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/assessment" id="navAssessment" class="nav-link" data-preserve-lang>
+            Assessment
+          </a>
+          <a href="/personas" id="navPersonas" class="nav-link active" data-preserve-lang>
+            Personas
+          </a>
+          <a href="/framework" id="navFramework" class="nav-link" data-preserve-lang>
+            Framework
+          </a>
+        </nav>
+
+        <div class="site-actions">
+          <div class="locale-toggle" aria-label="Language switch">
+            <button type="button" class="locale-button" data-lang-target="en">EN</button>
+            <button type="button" class="locale-button" data-lang-target="zh">中文</button>
+          </div>
+          <a href="/assessment" id="headerCta" class="button button-primary" data-preserve-lang>
+            Start assessment
+          </a>
+        </div>
+      </header>
+
+      <main class="shell persona-page">
+        <section class="persona-hero surface">
+          <div class="persona-hero-grid">
+            <div class="persona-figure-stage" id="personaHeroFigure"></div>
+            <div class="persona-hero-copy">
+              <p class="eyebrow" id="personaEyebrow">Vincent persona</p>
+              <div class="family-badge" id="personaFamilyBadge">Family</div>
+              <h1 id="personaName">Persona</h1>
+              <p class="hero-lead persona-subtitle" id="personaSubtitle"></p>
+              <p class="section-lead" id="personaSummary"></p>
+              <div id="personaAxisPills" class="pill-row"></div>
+              <p class="microcopy" id="personaStressNote"></p>
+              <div class="hero-actions">
+                <a
+                  href="/assessment"
+                  id="personaAssessmentCta"
+                  class="button button-primary"
+                  data-preserve-lang
+                >
+                  Take the assessment
+                </a>
+                <a
+                  href="/personas"
+                  id="personaDirectoryCta"
+                  class="button button-secondary"
+                  data-preserve-lang
+                >
+                  Back to directory
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="metric-grid persona-metric-grid" id="personaMetricGrid"></section>
+
+        <section class="section-stack">
+          <div class="section-heading compact">
+            <p class="eyebrow" id="personaConstructsEyebrow">Construct tendencies</p>
+            <h2 id="personaConstructsTitle">How this lens usually leans on the Vincent model.</h2>
+          </div>
+          <div id="personaConstructs" class="construct-tendency-grid"></div>
+        </section>
+
+        <section class="section-stack">
+          <div id="personaSections" class="feature-grid persona-section-grid"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer shell">
+        <div class="footer-copy">
+          <strong>Vincent AI</strong>
+          <p id="footerNote">
+            Reflective personality and attachment check-in with an editorial persona layer.
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="/assessment" id="footerAssessment" data-preserve-lang>Assessment</a>
+          <a href="/personas" id="footerPersonas" data-preserve-lang>Personas</a>
+          <a href="/framework" id="footerFramework" data-preserve-lang>Framework</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
