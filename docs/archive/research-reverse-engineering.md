@@ -1,4 +1,6 @@
-# TMTi Reverse-Engineering Notes
+# Archived TMTi Reverse-Engineering Notes
+
+This document is historical reference material from the earlier personality-product phase. It is not part of the active Vincent ADHD product definition.
 
 ## What was inspected
 

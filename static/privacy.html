@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vincent ADHD Privacy and Scope</title>
+    <meta
+      name="description"
+      content="Privacy, scope, and safety boundaries for Vincent ADHD."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var hour = new Date().getHours();
+        var theme = hour >= 6 && hour < 18 ? "day" : "night";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/app.css?v=20260426b" />
+  </head>
+  <body data-page="privacy">
+    <div class="site-shell">
+      <header class="topbar shell-compact">
+        <a href="/" class="brand" aria-label="Vincent ADHD home">
+          <span class="brand-mark">V</span>
+          <span class="brand-copy">
+            <strong>Vincent ADHD</strong>
+            <small>local-first screening and clinician prep</small>
+          </span>
+        </a>
+        <div class="top-actions">
+          <a href="/" class="text-link">Home</a>
+          <a href="/screening" class="text-link">Screening</a>
+          <a href="/how-it-works" class="text-link">How it works</a>
+        </div>
+      </header>
+
+      <main class="shell-compact content-page">
+        <section class="surface content-card">
+          <p class="eyebrow">Privacy and scope</p>
+          <h1>Clear boundaries are part of the product.</h1>
+          <p class="lead-small">
+            Vincent ADHD is a self-report screening and visit-preparation tool for adults. It is
+            not a diagnosis, treatment plan, medication recommendation, therapy service, or crisis
+            service.
+          </p>
+        </section>
+
+        <section class="surface content-card">
+          <h2>What Vincent is</h2>
+          <ul class="card-list">
+            <li>An adult-only ADHD-related screening summary.</li>
+            <li>A local-first tool that keeps answers in the browser by default.</li>
+            <li>A way to organize examples and questions for a licensed clinician.</li>
+          </ul>
+        </section>
+
+        <section class="surface content-card">
+          <h2>What Vincent is not</h2>
+          <ul class="card-list">
+            <li>Not a diagnosis or a way to confirm DSM-5 criteria.</li>
+            <li>Not therapy, crisis support, or medication guidance.</li>
+            <li>Not a clinically validated or licensed screening instrument in this version.</li>
+          </ul>
+        </section>
+
+        <section class="surface content-card">
+          <h2>Privacy behavior</h2>
+          <p>
+            Your answers are processed in your browser. They are not sent to Vincent servers. If
+            you choose to save progress, answers are stored locally on this device and can be
+            cleared at any time.
+          </p>
+        </section>
+
+        <section class="surface content-card">
+          <h2>Safety boundary</h2>
+          <p>
+            Vincent includes a minimal safety screen. If someone reports immediate danger or worry
+            about harming themselves or someone else, Vincent interrupts the screening and directs
+            them to emergency or crisis resources.
+          </p>
+          <p>
+            In the U.S., call or text 988 for the Suicide & Crisis Lifeline. Outside the U.S.,
+            contact local emergency services or local crisis resources.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

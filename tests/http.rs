@@ -35,6 +35,7 @@ async fn landing_route_returns_ok() {
 }
 
 #[tokio::test]
+<<<<<<< Updated upstream
 async fn personas_route_returns_ok() {
     let app = build_app();
 
@@ -90,12 +91,15 @@ async fn framework_route_returns_ok() {
 
 #[tokio::test]
 async fn question_api_returns_full_construct_catalog() {
+=======
+async fn screening_route_returns_ok() {
+>>>>>>> Stashed changes
     let app = build_app();
 
     let response = app
         .oneshot(
             Request::builder()
-                .uri("/api/questions")
+                .uri("/screening")
                 .method(Method::GET)
                 .body(Body::empty())
                 .expect("request should build"),
@@ -119,17 +123,21 @@ async fn question_api_returns_full_construct_catalog() {
 }
 
 #[tokio::test]
+<<<<<<< Updated upstream
 async fn score_api_returns_construct_profile() {
     let app = build_app();
     let payload = valid_payload(4);
+=======
+async fn assessment_alias_returns_ok() {
+    let app = build_app();
+>>>>>>> Stashed changes
 
     let response = app
         .oneshot(
             Request::builder()
-                .uri("/api/score")
-                .method(Method::POST)
-                .header("content-type", "application/json")
-                .body(Body::from(payload.to_string()))
+                .uri("/assessment")
+                .method(Method::GET)
+                .body(Body::empty())
                 .expect("request should build"),
         )
         .await
@@ -220,4 +228,71 @@ async fn score_api_rejects_invalid_answer_values() {
         .as_str()
         .expect("error should be present")
         .contains("must be 1, 2, 3, 4, or 5"));
+}
+
+#[tokio::test]
+async fn privacy_route_returns_ok() {
+    let app = build_app();
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/privacy")
+                .method(Method::GET)
+                .body(Body::empty())
+                .expect("request should build"),
+        )
+        .await
+        .expect("response should succeed");
+
+    assert_eq!(response.status(), StatusCode::OK);
+}
+
+#[tokio::test]
+async fn how_it_works_route_returns_ok() {
+    let app = build_app();
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/how-it-works")
+                .method(Method::GET)
+                .body(Body::empty())
+                .expect("request should build"),
+        )
+        .await
+        .expect("response should succeed");
+
+    assert_eq!(response.status(), StatusCode::OK);
+}
+
+#[tokio::test]
+async fn legacy_api_routes_are_not_active() {
+    let app = build_app();
+
+    let questions = app
+        .clone()
+        .oneshot(
+            Request::builder()
+                .uri("/api/questions")
+                .method(Method::GET)
+                .body(Body::empty())
+                .expect("request should build"),
+        )
+        .await
+        .expect("response should succeed");
+
+    let score = app
+        .oneshot(
+            Request::builder()
+                .uri("/api/score")
+                .method(Method::POST)
+                .body(Body::empty())
+                .expect("request should build"),
+        )
+        .await
+        .expect("response should succeed");
+
+    assert_eq!(questions.status(), StatusCode::NOT_FOUND);
+    assert_eq!(score.status(), StatusCode::NOT_FOUND);
 }

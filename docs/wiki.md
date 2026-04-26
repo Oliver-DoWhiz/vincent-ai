@@ -1,23 +1,17 @@
-# Vincent AI Wiki
+# Vincent ADHD Wiki
 
 ## What this repo is
 
-This repo contains the first local MVP for Vincent AI:
+This repo contains the v0 local-first Vincent ADHD product:
 
 - landing page
-- assessment flow
-- scoring engine
-- results UI
-- product/design docs
+- browser-only adult ADHD screening flow
+- deterministic frontend scoring
+- local clinician-summary generation
+- privacy and safety documentation
+- Rust static server for compatibility
 
-## Who it is for
-
-- product review
-- story review
-- design direction review
-- local demo
-
-## Runbook
+## Local runbook
 
 ### Start locally
 
@@ -28,28 +22,27 @@ PATH=/usr/local/cargo/bin:$PATH CARGO_HOME=$PWD/.cargo-home cargo run
 ### Open
 
 - `http://127.0.0.1:3000/`
-- `http://127.0.0.1:3000/assessment`
+- `http://127.0.0.1:3000/screening`
 
-### Run tests
+### Validate
 
 ```bash
+node scripts/test_scoring.mjs
 PATH=/usr/local/cargo/bin:$PATH CARGO_HOME=$PWD/.cargo-home cargo test
 ```
 
 ## Current product decisions
 
-- no auth in MVP
-- no persistence
-- deterministic scoring
-- one-question-at-a-time assessment flow
-- premium editorial tone
-- explicit non-clinical framing
+- adult-only
+- local-first and privacy-first
+- no diagnosis or treatment claims
+- no account system
+- no backend scoring
+- no tracking that captures answers
 
 ## Suggested next work items
 
-1. Add result sharing and social cards.
-2. Add saved session history.
-3. Add post-result reflection prompts.
-4. Add analytics for completion and share intent.
-5. Run user interviews on tone calibration.
-6. Decide whether the product should remain consumer-facing or evolve toward coach tooling.
+1. Accessibility polish for keyboard navigation and screen readers.
+2. Content review by a licensed clinician.
+3. User testing on clarity of the report and safety language.
+4. Translation workflow only after safety-reviewed copy exists.

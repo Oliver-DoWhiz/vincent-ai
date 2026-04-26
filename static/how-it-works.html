@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How Vincent ADHD Works</title>
+    <meta
+      name="description"
+      content="How Vincent ADHD scoring, privacy, and report generation work in the browser."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var hour = new Date().getHours();
+        var theme = hour >= 6 && hour < 18 ? "day" : "night";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/app.css?v=20260426b" />
+  </head>
+  <body data-page="how-it-works">
+    <div class="site-shell">
+      <header class="topbar shell-compact">
+        <a href="/" class="brand" aria-label="Vincent ADHD home">
+          <span class="brand-mark">V</span>
+          <span class="brand-copy">
+            <strong>Vincent ADHD</strong>
+            <small>local-first screening and clinician prep</small>
+          </span>
+        </a>
+        <div class="top-actions">
+          <a href="/" class="text-link">Home</a>
+          <a href="/screening" class="text-link">Screening</a>
+          <a href="/privacy" class="text-link">Privacy / Scope</a>
+        </div>
+      </header>
+
+      <main class="shell-compact content-page">
+        <section class="surface content-card">
+          <p class="eyebrow">How it works</p>
+          <h1>Deterministic scoring, local report generation, careful language.</h1>
+          <p class="lead-small">
+            Vincent uses original self-report prompts about recent attention and executive-function
+            patterns, restlessness or impulsivity, functional impairment, childhood history,
+            cross-setting evidence, and overlapping factors worth discussing with a clinician.
+          </p>
+        </section>
+
+        <section class="surface compact-steps">
+          <article class="mini-step">
+            <span class="step-number">01</span>
+            <strong>Current signals</strong>
+            <p>Attention, executive-function, restlessness, and impulsivity are scored in-browser.</p>
+          </article>
+          <article class="mini-step">
+            <span class="step-number">02</span>
+            <strong>Context checks</strong>
+            <p>Impairment, childhood history, cross-setting patterns, and overlap factors add context.</p>
+          </article>
+          <article class="mini-step">
+            <span class="step-number">03</span>
+            <strong>Cautious result</strong>
+            <p>Vincent returns a screening signal, not a diagnosis, and builds a local report.</p>
+          </article>
+        </section>
+
+        <section class="surface content-card">
+          <h2>Important limitations</h2>
+          <p>
+            Vincent does not diagnose ADHD, provide treatment advice, or claim clinical
+            validation. Other factors such as sleep, anxiety, depression, trauma, substance use,
+            medical issues, or burnout can overlap with ADHD-like symptoms and should be discussed
+            with a licensed clinician.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

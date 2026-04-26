@@ -1,7 +1,8 @@
-# Vincent AI Technical Design
+# Vincent ADHD Technical Design
 
-## Document intent
+## Overview
 
+<<<<<<< Updated upstream
 This design doc follows a compact engineering format: context, goals,
 architecture, data model, APIs, testing, and future evolution.
 
@@ -29,71 +30,112 @@ The MVP needs to be:
 - multi-tenant storage
 - formal validation tooling inside the app
 - percentile or probability estimation without calibration data
+=======
+Vincent ADHD v0 is a pure frontend screening experience served by a lightweight Rust app.
 
-## Architecture overview
+The assessment, scoring, and report generation happen entirely in the browser. Rust remains only as a static file server and route shell for local development or deployment compatibility.
 
-Vincent AI is a small Rust web app built with:
+## Goals
 
-- `axum` for routing and JSON APIs
-- `tower-http` for static asset serving
-- static HTML/CSS/JS for the frontend
-- pure Rust domain logic for assessment scoring
+- keep the assessment fully client-side
+- avoid backend handling of health-related answers
+- keep scoring deterministic and explainable
+- support export without server storage
+- preserve a simple no-build-step workflow
 
-### Why this stack
+## Non-goals
 
-- simple deployment shape
-- strong local developer ergonomics
-- fast startup
-- no frontend build step required for the MVP
-- scoring logic remains easy to test and reason about
+- backend persistence
+- auth
+- user accounts
+- analytics pipelines for answers
+- LLM interpretation
+- server-side scoring
+>>>>>>> Stashed changes
 
-## System diagram
+## Runtime architecture
 
 ```text
 Browser
   -> GET /               -> landing.html
+<<<<<<< Updated upstream
   -> GET /assessment     -> assessment.html
   -> GET /api/questions  -> question catalog JSON
   -> POST /api/score     -> construct scoring engine
   -> GET /static/*       -> app.css / app.js
+=======
+  -> GET /screening      -> screening.html
+  -> GET /privacy        -> privacy.html
+  -> GET /how-it-works   -> how-it-works.html
+  -> GET /static/*       -> CSS + frontend modules
+
+Frontend modules
+  -> adhd-data.mjs       -> question catalog and product copy
+  -> adhd-scoring.mjs    -> deterministic scoring logic
+  -> adhd-report.mjs     -> local Markdown report generation
+  -> app.mjs             -> UI rendering, storage, actions
+>>>>>>> Stashed changes
 ```
 
-## Modules
+## Data flow
 
-### `src/domain.rs`
+1. User opens `/screening`.
+2. User completes the scope gate.
+3. Browser stores responses in memory.
+4. If the user opts in, browser mirrors state into `localStorage`.
+5. Browser computes the screening signal with deterministic logic.
+6. Browser renders the result and clinician-prep checklist.
+7. Browser generates a Markdown report locally for copy, download, or print.
 
-Contains:
+No health-related answers are posted to the server.
 
+<<<<<<< Updated upstream
 - 28-item question catalog
 - 7 construct definitions
 - reverse-keying metadata
 - score request and response types
 - continuous construct scoring
 - short interpretation logic
+=======
+## Scoring model
+>>>>>>> Stashed changes
 
-### `src/web.rs`
+Inputs:
 
-Contains:
+- current attention and executive-function responses
+- restlessness or impulsivity responses
+- impairment responses
+- childhood-history responses
+- cross-setting count
+- overlapping-factor count
+- safety flag
 
+<<<<<<< Updated upstream
 - app router
 - landing and assessment route handlers
 - question API
 - score API
 - static serving
+=======
+Output bands:
+>>>>>>> Stashed changes
 
-### `static/`
+- Elevated ADHD-related screening signal
+- Moderate ADHD-related screening signal
+- Low ADHD-related screening signal
+- Inconclusive / more context needed
 
-Contains:
+Key rule:
 
-- landing page
-- assessment page
-- CSS theme
-- assessment interaction logic
+- Vincent can surface an elevated screening signal only when current patterns, impairment, cross-setting evidence, and childhood-history evidence all move in the same direction.
 
-## Data model
+## Safety handling
 
-### Question
+- safety prompt is required
+- if immediate danger is reported, the browser interrupts the assessment flow
+- crisis guidance replaces the normal result flow
 
+<<<<<<< Updated upstream
 - `id`
 - `dimension`
 - `prompt`
@@ -219,3 +261,10 @@ For future versions:
 - safety workflows
 - coach- or clinician-reviewed content only if the product moves closer to wellness or care
 - research notes in [docs/psychometric-redesign.md](./psychometric-redesign.md)
+=======
+## Testing
+
+- `scripts/test_scoring.mjs` validates scoring and report wording
+- `tests/http.rs` validates the static routes and confirms legacy APIs are not active
+- static scans validate forbidden language and legacy API references
+>>>>>>> Stashed changes

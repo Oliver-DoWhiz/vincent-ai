@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vincent ADHD Screening</title>
+    <meta
+      name="description"
+      content="Private, browser-only ADHD screening and clinician-prep flow for adults."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var hour = new Date().getHours();
+        var theme = hour >= 6 && hour < 18 ? "day" : "night";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/app.css?v=20260426b" />
+    <script type="module" src="/static/app.mjs?v=20260426b"></script>
+  </head>
+  <body data-page="screening">
+    <div class="site-shell">
+      <header class="topbar shell-compact">
+        <a href="/" class="brand" aria-label="Vincent ADHD home">
+          <span class="brand-mark">V</span>
+          <span class="brand-copy">
+            <strong>Vincent ADHD</strong>
+            <small>local-first screening and clinician prep</small>
+          </span>
+        </a>
+        <div class="top-actions">
+          <a href="/" class="text-link">Home</a>
+          <a href="/privacy" class="text-link">Privacy / Scope</a>
+          <a href="/how-it-works" class="text-link">How it works</a>
+        </div>
+      </header>
+
+      <main class="shell-compact assessment-page">
+        <section class="task-header">
+          <div class="task-header-top">
+            <div>
+              <p class="eyebrow" id="taskEyebrow">Private screening</p>
+              <h1 id="taskTitle">Review the limits before you begin.</h1>
+              <p class="lead-small" id="taskLead">
+                Vincent is adult-only, non-diagnostic, local-first, and not a crisis or treatment
+                tool.
+              </p>
+            </div>
+            <div class="progress-meta">
+              <strong id="progressLabel">Step 1</strong>
+              <span id="progressPercent">0% done</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="task-header-bottom">
+            <span class="helper-note" id="progressAnswered">0 of 33 core prompts answered</span>
+            <div class="task-inline-tools">
+              <label class="toggle-inline" for="saveProgressToggle">
+                <input type="checkbox" id="saveProgressToggle" />
+                <span>Save progress on this device</span>
+              </label>
+              <button type="button" class="button button-secondary" id="clearLocalDataButton">
+                Clear local data
+              </button>
+            </div>
+          </div>
+          <p class="microcopy inline-note">
+            Your answers are processed in your browser. They are not sent to Vincent servers. If
+            you choose to save progress, answers are stored locally on this device and can be
+            cleared at any time.
+          </p>
+        </section>
+
+        <article class="surface card question-card" id="questionCard">
+          <div class="question-meta">
+            <div class="question-meta-left">
+              <span class="question-number" id="questionIndex">01</span>
+              <span class="question-dimension" id="dimensionBadge">Scope</span>
+            </div>
+            <span class="helper-note" id="stepMeta">Required</span>
+          </div>
+          <h2 id="questionPrompt">Review the limits before you begin.</h2>
+          <p class="lead-small" id="questionHelp"></p>
+          <div id="optionList" class="option-list"></div>
+          <div id="fieldList" class="field-list"></div>
+          <div class="actions-row">
+            <button id="previousButton" class="button button-secondary button-reset" type="button">
+              Previous
+            </button>
+            <button id="nextButton" class="button button-primary button-reset" type="button">
+              Continue
+            </button>
+          </div>
+        </article>
+
+        <article class="surface card crisis-card hidden" id="crisisCard">
+          <p class="eyebrow">Immediate safety support</p>
+          <p class="result-headline">Vincent is not the right tool for a crisis</p>
+          <h2>Seek urgent support now.</h2>
+          <section class="surface inset-card">
+            <p>
+              If you are in immediate danger or worried you may harm yourself or someone else, call
+              emergency services now. In the U.S., call or text 988 for the Suicide & Crisis
+              Lifeline. Outside the U.S., contact your local emergency services or crisis
+              resources.
+            </p>
+          </section>
+          <p class="microcopy">
+            Vincent does not provide crisis support, diagnosis, treatment, or urgent clinical
+            guidance.
+          </p>
+          <div class="actions-row">
+            <button id="clearAfterSafetyButton" class="button button-secondary" type="button">
+              Clear answers
+            </button>
+            <a href="/privacy" class="button button-primary">Review scope and safety</a>
+          </div>
+        </article>
+
+        <article class="surface card result-card hidden" id="resultCard">
+          <p class="eyebrow">Your screening summary</p>
+          <p class="result-headline" id="resultHeadline">Screening signal</p>
+
+          <div class="result-title-row">
+            <div>
+              <h2 id="resultName">Signal</h2>
+              <p class="result-subtitle" id="resultSubtitle"></p>
+            </div>
+            <div class="result-badges">
+              <span class="info-pill">Not a diagnosis</span>
+              <span class="info-pill">Local-first</span>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <label>Affected settings</label>
+              <strong id="resultSettingsCount">0</strong>
+            </div>
+            <div class="metric-card">
+              <label>Overlapping factors</label>
+              <strong id="resultOverlapCount">0</strong>
+            </div>
+          </div>
+
+          <p class="result-copy" id="resultEssence"></p>
+          <p class="result-copy subtle-copy" id="resultReflection"></p>
+
+          <section class="surface inset-card">
+            <h3>Why this signal appeared</h3>
+            <div id="dimensionBars" class="dimension-list"></div>
+          </section>
+
+          <section class="surface inset-card split-info-card">
+            <div class="two-column-grid">
+              <div>
+                <h3>What this does not mean</h3>
+                <ul id="nonDiagnosticList" class="feature-list compact-list"></ul>
+              </div>
+              <div>
+                <h3>What to bring to a clinician</h3>
+                <ul id="clinicianChecklist" class="feature-list compact-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="surface inset-card">
+            <h3>Other factors to discuss</h3>
+            <p class="microcopy" id="overlapFallback"></p>
+            <div id="overlapPills" class="pill-stack"></div>
+          </section>
+
+          <section class="surface inset-card">
+            <h3>Clinician-ready summary preview</h3>
+            <pre id="reportPreview" class="report-preview"></pre>
+          </section>
+
+          <section class="result-note">
+            <p id="resultFracture" class="subtle-copy"></p>
+            <p id="resultCaution" class="microcopy"></p>
+          </section>
+
+          <div class="actions-row">
+            <button id="clearAnswersButton" class="button button-secondary" type="button">
+              Clear answers
+            </button>
+            <button id="copyReportButton" class="button button-primary" type="button">
+              Copy clinician summary
+            </button>
+            <button id="downloadReportButton" class="button button-secondary" type="button">
+              Download Markdown report
+            </button>
+            <button id="printReportButton" class="button button-secondary" type="button">
+              Print / Save as PDF
+            </button>
+          </div>
+          <p class="microcopy" id="actionStatus" aria-live="polite"></p>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>

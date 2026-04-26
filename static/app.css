@@ -34,10 +34,16 @@ html[data-theme="day"] {
   --sage: #111316;
   --sage-soft: rgba(17, 19, 22, 0.04);
   --track: rgba(17, 19, 22, 0.08);
+<<<<<<< Updated upstream
   --shadow-lg: 0 22px 60px -42px rgba(17, 19, 22, 0.24);
   --shadow-md: 0 14px 28px -22px rgba(17, 19, 22, 0.16);
   --shadow-sm: 0 14px 28px -22px rgba(17, 19, 22, 0.16);
   --surface-glow: rgba(255, 255, 255, 0.78);
+=======
+  --shadow: 0 22px 60px -42px rgba(17, 19, 22, 0.24);
+  --shadow-soft: 0 14px 28px -22px rgba(17, 19, 22, 0.16);
+  --danger-surface: rgba(88, 22, 20, 0.08);
+>>>>>>> Stashed changes
 }
 
 html[data-theme="night"] {
@@ -63,10 +69,16 @@ html[data-theme="night"] {
   --sage: #f5f6f7;
   --sage-soft: rgba(255, 255, 255, 0.04);
   --track: rgba(255, 255, 255, 0.08);
+<<<<<<< Updated upstream
   --shadow-lg: 0 28px 76px -46px rgba(0, 0, 0, 0.68);
   --shadow-md: 0 14px 28px -22px rgba(0, 0, 0, 0.44);
   --shadow-sm: 0 14px 28px -22px rgba(0, 0, 0, 0.44);
   --surface-glow: rgba(255, 255, 255, 0.05);
+=======
+  --shadow: 0 28px 76px -46px rgba(0, 0, 0, 0.68);
+  --shadow-soft: 0 14px 28px -22px rgba(0, 0, 0, 0.44);
+  --danger-surface: rgba(139, 46, 35, 0.18);
+>>>>>>> Stashed changes
 }
 
 * {
@@ -108,10 +120,32 @@ select {
   font: inherit;
 }
 
+<<<<<<< Updated upstream
 img,
 svg {
   display: block;
   max-width: 100%;
+=======
+body,
+body::before,
+.surface,
+.button,
+.brand-mark,
+.metric-card,
+.option-button,
+.progress-track,
+.progress-bar,
+.question-dimension,
+.info-pill,
+.text-area {
+  transition:
+    background var(--ease-theme),
+    color var(--ease-theme),
+    border-color var(--ease-theme),
+    box-shadow var(--ease-theme),
+    opacity var(--ease-theme),
+    transform 180ms ease;
+>>>>>>> Stashed changes
 }
 
 h1,
@@ -147,10 +181,23 @@ h3 {
   line-height: 1.14;
 }
 
+<<<<<<< Updated upstream
 p {
   color: var(--ink-soft);
+=======
+p,
+label,
+li {
+  margin: 0;
+  color: var(--text-soft);
+>>>>>>> Stashed changes
   font-size: 0.98rem;
   line-height: 1.68;
+}
+
+ul {
+  margin: 0;
+  padding-left: 1rem;
 }
 
 ::selection {
@@ -178,6 +225,16 @@ body[data-page="landing"] .site-shell {
   margin: 0 auto;
 }
 
+.shell,
+.shell-compact {
+  width: min(1120px, calc(100vw - 3rem));
+  margin: 0 auto;
+}
+
+.shell-compact {
+  width: min(900px, calc(100vw - 2rem));
+}
+
 .utility-row {
   position: absolute;
   top: 1rem;
@@ -189,11 +246,23 @@ body[data-page="landing"] .site-shell {
   pointer-events: none;
 }
 
+<<<<<<< Updated upstream
+=======
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0 0.85rem;
+}
+
+>>>>>>> Stashed changes
 .top-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   pointer-events: auto;
+<<<<<<< Updated upstream
 }
 
 .surface {
@@ -224,6 +293,9 @@ body[data-page="landing"] .site-shell {
   background: linear-gradient(180deg, var(--surface-glow), transparent);
   backdrop-filter: blur(16px);
   z-index: -1;
+=======
+  flex-wrap: wrap;
+>>>>>>> Stashed changes
 }
 
 .brand {
@@ -273,6 +345,7 @@ body[data-page="landing"] .site-shell {
   flex-wrap: wrap;
 }
 
+<<<<<<< Updated upstream
 .nav-link {
   padding: 0.72rem 1rem;
   border-radius: var(--radius-pill);
@@ -327,6 +400,13 @@ body[data-page="landing"] .site-shell {
   color: var(--primary-contrast);
 }
 
+=======
+.text-link:hover,
+.text-link[aria-current="page"] {
+  color: var(--text);
+}
+
+>>>>>>> Stashed changes
 .button,
 .button-reset {
   appearance: none;
@@ -387,6 +467,7 @@ body[data-page="landing"] .site-shell {
   text-transform: uppercase;
 }
 
+<<<<<<< Updated upstream
 .hero-lead,
 .section-lead {
   max-width: 62ch;
@@ -398,6 +479,34 @@ body[data-page="landing"] .site-shell {
 .framework-page,
 .persona-page,
 .assessment-page {
+=======
+.lead {
+  max-width: 48rem;
+  font-size: 1.05rem;
+}
+
+.lead-small {
+  max-width: 44rem;
+  font-size: 0.96rem;
+}
+
+.surface {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.card,
+.inset-card {
+  padding: 1.35rem;
+}
+
+.landing-page,
+.assessment-page,
+.content-page {
+>>>>>>> Stashed changes
   display: grid;
   gap: 1.35rem;
 }
@@ -424,6 +533,16 @@ body[data-page="landing"] .site-shell {
   gap: 1.1rem;
 }
 
+<<<<<<< Updated upstream
+=======
+.hero-centered h1,
+.hero-purpose,
+.hero-summary,
+.hero-note {
+  white-space: nowrap;
+}
+
+>>>>>>> Stashed changes
 .hero-brand {
   display: grid;
   justify-items: center;
@@ -457,7 +576,12 @@ body[data-page="landing"] .hero-brand .hero-copy {
   color: var(--ink-soft);
   font-size: 0.9rem;
   font-weight: 500;
+<<<<<<< Updated upstream
   white-space: nowrap;
+=======
+  letter-spacing: -0.01em;
+  text-transform: none;
+>>>>>>> Stashed changes
 }
 
 .hero-purpose {
@@ -467,11 +591,17 @@ body[data-page="landing"] .hero-brand .hero-copy {
   line-height: 1.45;
 }
 
+.hero-note-block {
+  display: grid;
+  gap: 0.55rem;
+}
+
 .hero-button {
   min-width: 12.5rem;
   margin-top: 0.2rem;
 }
 
+<<<<<<< Updated upstream
 .hero-note {
   white-space: nowrap;
 }
@@ -513,6 +643,175 @@ body[data-page="landing"] .locale-button.active {
 .hero-actions {
   display: flex;
   align-items: center;
+=======
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.compact-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.mini-step {
+  display: grid;
+  gap: 0.4rem;
+  padding: 1.25rem 1.35rem;
+}
+
+.mini-step + .mini-step {
+  border-left: 1px solid var(--border);
+}
+
+.step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.mini-step strong {
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.mini-step p {
+  color: var(--text-muted);
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+.note-card {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.single-note {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.task-header {
+  display: grid;
+  gap: 0.8rem;
+  padding-top: 1rem;
+}
+
+.task-header-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.task-header-top h1 {
+  margin-top: 0.45rem;
+  max-width: none;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.progress-meta {
+  display: grid;
+  gap: 0.12rem;
+  justify-items: end;
+  text-align: right;
+}
+
+.progress-meta strong {
+  color: var(--text);
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.progress-meta span {
+  color: var(--text-muted);
+  font-size: 0.83rem;
+}
+
+.progress-track,
+.dimension-meter {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.progress-bar,
+.dimension-meter span {
+  width: 0%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-fade) 100%);
+}
+
+.task-header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.task-inline-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.toggle-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.inline-note {
+  padding: 0.8rem 0.95rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+}
+
+.question-card,
+.result-card,
+.crisis-card {
+  display: grid;
+  gap: 1.2rem;
+  padding: 1.4rem;
+  animation: fade-up 320ms ease both;
+}
+
+.question-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.question-meta-left {
+  display: flex;
+  align-items: center;
+>>>>>>> Stashed changes
   gap: 0.75rem;
   flex-wrap: wrap;
 }
@@ -894,12 +1193,26 @@ body[data-page="landing"] .locale-button.active {
   text-transform: uppercase;
 }
 
+<<<<<<< Updated upstream
 .option-list {
+=======
+.question-card h2,
+.result-card h2,
+.crisis-card h2 {
+  max-width: none;
+  font-size: clamp(1.55rem, 3.2vw, 2.35rem);
+  line-height: 1.1;
+}
+
+.option-list,
+.field-list {
+>>>>>>> Stashed changes
   display: grid;
   gap: 0.75rem;
 }
 
-.option-button {
+.option-button,
+.check-option {
   width: 100%;
   display: grid;
   gap: 0.3rem;
@@ -915,6 +1228,7 @@ body[data-page="landing"] .locale-button.active {
     background var(--ease);
 }
 
+<<<<<<< Updated upstream
 .option-button.active {
   border-color: var(--primary);
   box-shadow: var(--shadow-sm);
@@ -925,6 +1239,71 @@ body[data-page="landing"] .locale-button.active {
   color: var(--ink-muted);
   font-size: 0.72rem;
   font-weight: 800;
+=======
+.option-button.active,
+.check-option.active {
+  border-color: var(--border-strong);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.option-index {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.option-text,
+.check-option span {
+  color: var(--text);
+  font-size: 0.97rem;
+  line-height: 1.55;
+}
+
+.check-option {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.check-option input {
+  margin-top: 0.24rem;
+}
+
+.text-area {
+  width: 100%;
+  min-height: 136px;
+  padding: 1rem 1.05rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  resize: vertical;
+}
+
+.field-group {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.field-group strong {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.field-group span {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.result-headline {
+  color: var(--text-muted);
+  font-size: 0.71rem;
+  font-weight: 700;
+>>>>>>> Stashed changes
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1099,16 +1478,73 @@ body[data-page="landing"] .locale-button.active {
   font-size: 0.9rem;
 }
 
+.pill-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.report-preview {
+  margin: 0;
+  padding: 1rem 1.05rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.58;
+  max-height: 22rem;
+  overflow: auto;
+}
+
 .result-note {
   display: grid;
   gap: 0.35rem;
 }
 
+<<<<<<< Updated upstream
 .cta-banner {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
+=======
+.content-card {
+  padding: 1.35rem;
+}
+
+.content-card h1 {
+  margin-top: 0.45rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.content-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.card-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+
+.card-list li {
+  color: var(--text-soft);
+}
+
+.crisis-card {
+  border-color: var(--border-strong);
+}
+
+.crisis-card .inset-card {
+  background: var(--danger-surface);
+}
+
+.hidden {
+  display: none !important;
+>>>>>>> Stashed changes
 }
 
 .site-footer {
@@ -1188,10 +1624,36 @@ body[data-page="landing"] .locale-button.active {
   }
 }
 
+<<<<<<< Updated upstream
 @media (max-width: 920px) {
   .site-header {
     grid-template-columns: 1fr;
     justify-items: start;
+=======
+@media print {
+  .topbar,
+  .task-header,
+  .actions-row,
+  #actionStatus {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .surface,
+  .inset-card,
+  .report-preview {
+    box-shadow: none;
+    background: #fff;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    font-size: 15.5px;
+>>>>>>> Stashed changes
   }
 
   .site-nav,
@@ -1200,11 +1662,37 @@ body[data-page="landing"] .locale-button.active {
     justify-content: space-between;
   }
 
+<<<<<<< Updated upstream
   .hero-grid,
   .assessment-intro,
   .assessment-layout,
   .persona-hero-grid,
   .result-hero-grid {
+=======
+  .utility-row {
+    top: 0.7rem;
+  }
+
+  .hero-block {
+    padding-top: 2.75rem;
+  }
+
+  .hero-centered {
+    min-height: auto;
+    padding: 2rem 0 3rem;
+  }
+
+  .hero-summary,
+  .hero-purpose,
+  .hero-centered h1,
+  .hero-note {
+    white-space: normal;
+  }
+
+  .compact-steps,
+  .metric-grid,
+  .two-column-grid {
+>>>>>>> Stashed changes
     grid-template-columns: 1fr;
   }
 
@@ -1230,8 +1718,22 @@ body[data-page="landing"] .locale-button.active {
     font-size: 15.5px;
   }
 
+<<<<<<< Updated upstream
   .shell {
     width: calc(100vw - 1rem);
+=======
+  .task-header-bottom {
+    align-items: flex-start;
+  }
+
+  .actions-row {
+    flex-direction: column-reverse;
+  }
+
+  .actions-row .button,
+  .actions-row a {
+    width: 100%;
+>>>>>>> Stashed changes
   }
 
   h1 {

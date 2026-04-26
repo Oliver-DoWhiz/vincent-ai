@@ -1,39 +1,32 @@
 use std::net::SocketAddr;
 
 use axum::{
-    extract::State,
-    http::StatusCode,
-    response::{Html, IntoResponse, Response},
-    routing::{get, post},
-    Json, Router,
+    response::Html,
+    routing::get,
+    Router,
 };
-use serde::Serialize;
 use tower_http::{services::ServeDir, trace::TraceLayer};
-
-use crate::domain::{questions, score, ScoreRequest};
-
-#[derive(Clone, Default)]
-pub struct AppState;
-
-#[derive(Debug, Serialize)]
-struct ErrorPayload {
-    error: String,
-}
 
 pub fn build_app() -> Router {
     Router::new()
         .route("/", get(landing))
+<<<<<<< Updated upstream
         .route("/assessment", get(assessment))
         .route("/personas", get(personas))
         .route("/personas/:slug", get(persona_detail))
         .route("/framework", get(framework))
         .route("/api/questions", get(all_questions))
         .route("/api/score", post(score_assessment))
+=======
+        .route("/screening", get(screening))
+        .route("/assessment", get(screening))
+        .route("/privacy", get(privacy))
+        .route("/how-it-works", get(how_it_works))
+>>>>>>> Stashed changes
         .nest_service(
             "/static",
             ServeDir::new(concat!(env!("CARGO_MANIFEST_DIR"), "/static")),
         )
-        .with_state(AppState)
         .layer(TraceLayer::new_for_http())
 }
 
@@ -68,10 +61,11 @@ async fn landing() -> Html<&'static str> {
     Html(include_str!("../static/landing.html"))
 }
 
-async fn assessment() -> Html<&'static str> {
-    Html(include_str!("../static/assessment.html"))
+async fn screening() -> Html<&'static str> {
+    Html(include_str!("../static/screening.html"))
 }
 
+<<<<<<< Updated upstream
 async fn personas() -> Html<&'static str> {
     Html(include_str!("../static/personas.html"))
 }
@@ -86,20 +80,12 @@ async fn framework() -> Html<&'static str> {
 
 async fn all_questions(State(_): State<AppState>) -> Json<&'static [crate::domain::Question]> {
     Json(questions())
+=======
+async fn privacy() -> Html<&'static str> {
+    Html(include_str!("../static/privacy.html"))
+>>>>>>> Stashed changes
 }
 
-async fn score_assessment(
-    State(_): State<AppState>,
-    Json(payload): Json<ScoreRequest>,
-) -> Response {
-    match score(payload) {
-        Ok(result) => Json(result).into_response(),
-        Err(err) => (
-            StatusCode::BAD_REQUEST,
-            Json(ErrorPayload {
-                error: err.message(),
-            }),
-        )
-            .into_response(),
-    }
+async fn how_it_works() -> Html<&'static str> {
+    Html(include_str!("../static/how-it-works.html"))
 }

@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vincent AI</title>
+    <title>Vincent ADHD</title>
     <meta
       name="description"
+<<<<<<< Updated upstream
       content="Vincent is a personal companion for early mental health reflection."
+=======
+      content="Vincent ADHD is a private, local-first ADHD screening and visit-prep tool for adults."
+>>>>>>> Stashed changes
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,41 +26,72 @@
         document.documentElement.style.colorScheme = theme === "night" ? "dark" : "light";
       })();
     </script>
+<<<<<<< Updated upstream
     <link rel="stylesheet" href="/static/app.css?v=20260415b" />
     <script defer src="/static/app.js?v=20260415b"></script>
+=======
+    <link rel="stylesheet" href="/static/app.css?v=20260426b" />
+>>>>>>> Stashed changes
   </head>
   <body data-page="landing">
     <div class="site-shell">
       <div class="utility-row shell">
         <div class="top-actions">
-          <div class="locale-toggle" aria-label="Language switch">
-            <button type="button" class="locale-button" data-lang-target="en">EN</button>
-            <button type="button" class="locale-button" data-lang-target="zh">中文</button>
-          </div>
+          <a href="/privacy" class="text-link">Privacy / Scope</a>
+          <a href="/how-it-works" class="text-link">How it works</a>
         </div>
       </div>
 
       <main class="shell landing-page landing-page-centered">
         <section class="hero-block hero-centered">
-          <a href="/" class="hero-brand" aria-label="Vincent AI home" data-preserve-lang>
+          <a href="/" class="hero-brand" aria-label="Vincent ADHD home">
             <span class="hero-mark">V</span>
-            <span class="hero-copy">Vincent AI</span>
+            <span class="hero-copy">Vincent ADHD</span>
           </a>
-          <p class="eyebrow hero-summary" id="landingHeroSummary">Personal mental health companion</p>
-          <h1 id="landingHeroTitle">Meet Vincent</h1>
-          <p class="hero-purpose" id="landingHeroPurpose">
-            A personal companion for early mental health reflection.
+          <p class="eyebrow hero-summary">Adult ADHD screening and visit preparation</p>
+          <h1>Private screening for adults.</h1>
+          <p class="hero-purpose">
+            A private, local-first ADHD screening and visit-prep tool for adults.
           </p>
-          <a
-            href="/assessment"
-            class="button button-primary hero-button"
-            id="landingHeroCta"
-            data-preserve-lang
-          >
-            Start with assessment
-          </a>
-          <p class="helper-note hero-note" id="landingHeroNote">
-            Private by default. Not for crisis support.
+          <div class="hero-actions">
+            <a href="/screening" class="button button-primary hero-button">Start private screening</a>
+            <a href="/privacy" class="button button-secondary hero-button">Read privacy and scope</a>
+          </div>
+          <div class="hero-note-block">
+            <p class="helper-note hero-note">
+              Your answers stay in your browser. Vincent does not diagnose, treat, prescribe, or
+              replace professional care.
+            </p>
+            <p class="helper-note hero-note">
+              If you may harm yourself or someone else, or you are in immediate danger, call
+              emergency services. In the U.S., call or text 988.
+            </p>
+          </div>
+        </section>
+
+        <section class="surface compact-steps">
+          <article class="mini-step">
+            <span class="step-number">01</span>
+            <strong>Organize current patterns</strong>
+            <p>Track attention, impulsivity, executive-function difficulties, and recent examples.</p>
+          </article>
+          <article class="mini-step">
+            <span class="step-number">02</span>
+            <strong>Check context carefully</strong>
+            <p>Include childhood history, cross-setting evidence, and overlapping factors to discuss.</p>
+          </article>
+          <article class="mini-step">
+            <span class="step-number">03</span>
+            <strong>Bring a clearer summary</strong>
+            <p>Copy, download, print, or bring a clinician-ready local report to an appointment.</p>
+          </article>
+        </section>
+
+        <section class="surface card note-card">
+          <p class="eyebrow">Important boundary</p>
+          <p class="single-note">
+            Vincent ADHD is a self-report screening and visit-preparation tool. It is not a
+            diagnosis, treatment plan, therapy service, medication guide, or crisis service.
           </p>
         </section>
       </main>
