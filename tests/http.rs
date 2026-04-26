@@ -29,7 +29,8 @@ async fn landing_route_returns_ok() {
     let html = String::from_utf8(body.to_vec()).expect("landing should be utf-8");
 
     assert!(html.contains("Vincent ADHD"));
-    assert!(html.contains("Start private screening"));
+    assert!(html.contains("Start screening"));
+    assert!(html.contains("Private adult ADHD screening"));
 }
 
 #[tokio::test]
