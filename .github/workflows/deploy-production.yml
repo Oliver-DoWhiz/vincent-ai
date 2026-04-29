@@ -1,0 +1,78 @@
+name: deploy_production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: vincent-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Create SSH directory
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Decode SSH private key
+        run: |
+          echo "${{ secrets.PROD_SSH_PRIVATE_KEY }}" > ~/.ssh/private_key.pem
+          chmod 600 ~/.ssh/private_key.pem
+
+      - name: Add Azure VM to known_hosts
+        run: |
+          ssh-keyscan -H "${{ secrets.PROD_AZURE_VM_IP }}" >> ~/.ssh/known_hosts
+
+      - name: Create SSH config
+        run: |
+          cat <<EOF > ~/.ssh/config
+          Host azureproduction
+            HostName ${{ secrets.PROD_AZURE_VM_IP }}
+            User ${{ secrets.PROD_AZURE_VM_USER }}
+            Port 22
+            IdentityFile ~/.ssh/private_key.pem
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Deploy on Azure VM
+        run: |
+          ssh -F ~/.ssh/config azureproduction << 'EOF'
+          set -euo pipefail
+
+          APP_DIR=/home/${{ secrets.PROD_AZURE_VM_USER }}/server/vincent-ai
+          REPO_URL="https://github.com/${{ github.repository }}.git"
+          TARGET_SHA="${{ github.sha }}"
+
+          if [[ ! -d "$APP_DIR/.git" ]]; then
+            mkdir -p "$(dirname "$APP_DIR")"
+            git clone "$REPO_URL" "$APP_DIR"
+          fi
+
+          cd "$APP_DIR"
+          git fetch origin --prune
+          git checkout -f "$TARGET_SHA"
+
+          export PATH="$HOME/.cargo/bin:$PATH"
+          export CARGO_HOME="$APP_DIR/.cargo-home"
+
+          cargo test --locked
+          cargo build --locked --release
+
+          mkdir -p /home/${{ secrets.PROD_AZURE_VM_USER }}/server/logs
+          pm2 startOrReload /home/${{ secrets.PROD_AZURE_VM_USER }}/ecosystem.config.js --only vincent-ai --update-env
+          pm2 save
+          EOF
